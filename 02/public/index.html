@@ -1,0 +1,16 @@
+<html>
+  <head>
+    <title>Node.js</title>
+  </head>
+  <body>
+    Hello Node
+    <ul></ul>
+  </body>
+  <script src="//zeptojs.com/zepto.min.js"></script>
+  <script>
+    $.get('/api/projects', data => {
+      const html = data.list.map(str => `<li>${str}</li>`);
+      $('ul').append(html);
+    });
+  </script>
+</html>
