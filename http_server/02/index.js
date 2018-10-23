@@ -1,4 +1,5 @@
-// index.js
+'use strict';
+
 const http = require('http');
 
 // 引入处理逻辑
