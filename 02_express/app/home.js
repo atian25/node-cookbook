@@ -5,6 +5,8 @@ const path = require('path');
 
 const html = fs.readFileSync(path.join(__dirname, '../public/index.html'));
 
-module.exports = async ctx => {
-  ctx.body = html;
+module.exports = function(req, res) {
+  res.status(200);
+  res.type('html');
+  res.end(html);
 };

@@ -1,13 +1,12 @@
 {
-  "name": "koa-example",
+  "name": "express-example",
   "version": "1.0.0",
-  "description": "showcase for koa",
+  "description": "showcase for express",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
   "dependencies": {
-    "koa": "^2.6.1",
-    "koa-router": "^7.4.0"
+    "express": "^4.16.4"
   }
 }
