@@ -1,0 +1,13 @@
+{
+  "name": "koa-example",
+  "version": "1.0.0",
+  "description": "showcase for koa",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "koa": "^2.6.1",
+    "koa-router": "^7.4.0"
+  }
+}
