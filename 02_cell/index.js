@@ -2,12 +2,11 @@
 
 const fs = require('fs');
 const path = require('path');
-const URL = require('url');
 
 const Cell = require('./lib/cell');
 const app = new Cell();
 
-// 根据 URL 返回不同的内容
+// 路由映射
 
 // 打印访问日志
 app.use((req, res, next) => {
@@ -27,21 +26,16 @@ app.get('/api/projects', (req, res) => {
   const data = {
     list: [ 'Node', 'Koa', 'Egg' ],
   };
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'application/json');
-  return res.end(JSON.stringify(data, null, 2));
+  res.json(data);
 });
 
 app.get('/api/projects/detail', (req, res) => {
-  const urlObj = URL.parse(req.url, true);
-  const name = urlObj.query.name || 'unknown';
+  const name = req.query.name || 'unknown';
   const data = {
     name,
     desc: `this is detail of ${name}`,
   };
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'application/json');
-  return res.end(JSON.stringify(data, null, 2));
+  res.json(data);
 });
 
 // 兜底处理

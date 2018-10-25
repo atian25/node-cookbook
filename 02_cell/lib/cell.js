@@ -37,8 +37,26 @@ module.exports = class Cell {
     }
   }
 
+  // 注意：此处为简化示例，一般需要包裹一层，此处直接写入，仅供参考
+  _patch(req, res) {
+    // req
+    const urlObj = URL.parse(req.url, true);
+    req.pathname = urlObj.pathname;
+    req.query = urlObj.query;
+
+    // res
+    res.json = data => {
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify(data, null, 2));
+    };
+  }
+
   // 处理函数
   handler(req, res) {
+    // 扩展 API 语法糖
+    this._patch(req, res);
+
     let i = 0;
     const next = () => {
       const rule = this.middlewares[i++];
