@@ -7,11 +7,18 @@ const home = require('./app/home');
 const notFound = require('./app/not_found');
 const projects = require('./app/api/projects');
 
-// 根据 URL 返回不同的内容
 const app = new express();
 
+// 打印访问日志
+app.use((req, res, next) => {
+  console.log(`visit ${req.url}`);
+  next(); // 继续执行后续逻辑
+});
+
+// 路由映射
 app.get('/', home);
 app.get('/api/projects', projects.list);
+app.get('/api/projects/detail', projects.detail);
 app.use(notFound);
 
 // 启动服务

@@ -3,10 +3,11 @@
 const fs = require('fs');
 const path = require('path');
 
-const html = fs.readFileSync(path.join(__dirname, '../public/index.html'));
-
 module.exports = function(req, res) {
-  res.status(200);
+  res.statusCode = 200;
   res.type('html');
-  res.end(html);
+  // 注意：此处为简化示例，一般需要缓存，且一定不能使用 Sync 同步方法
+  const html = fs.readFileSync(path.join(__dirname, '../public/index.html'));
+  return res.end(html);
 };
+
