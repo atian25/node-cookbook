@@ -11,7 +11,7 @@ function handler(req, res) {
   const pathName = urlObj.pathname;
 
   // 打印访问日志
-  console.log(`visit ${req.url}`);
+  console.log(`request api: ${req.url}`);
 
   // 根据 URL 返回不同的内容
   if (pathName === '/') {

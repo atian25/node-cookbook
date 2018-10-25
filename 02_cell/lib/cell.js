@@ -8,10 +8,12 @@ module.exports = class Cell {
     this.middlewares = [];
   }
 
+  // 挂载中间件
   use(fn) {
     this.middlewares.push({ fn });
   }
 
+  // 挂载路由
   get(pattern, fn) {
     this.middlewares.push({
       method: 'GET',
@@ -20,6 +22,7 @@ module.exports = class Cell {
     });
   }
 
+  // 路由匹配
   _match(req, rule) {
     const { pattern, method } = rule;
     if (method && method !== req.method) return false;
@@ -34,6 +37,7 @@ module.exports = class Cell {
     }
   }
 
+  // 处理函数
   handler(req, res) {
     let i = 0;
     const next = () => {
@@ -45,6 +49,7 @@ module.exports = class Cell {
     next();
   }
 
+  // 启动服务
   listen(port, callback) {
     this.server = http.createServer(this.handler.bind(this));
     this.server.listen(port, callback);

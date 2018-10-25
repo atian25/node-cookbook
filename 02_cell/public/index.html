@@ -4,28 +4,44 @@
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.min.css">
   </head>
   <body>
-    <nav class="navbar navbar-dark bg-dark navbar-expand">
-      <ul id="list" class="navbar-nav"></ul>
-    </nav>
-    <div id="detail" class="tab-content font-weight-bold" style="padding: 30px;"></div>
+    <div id="app">
+      <nav class="navbar navbar-dark bg-dark navbar-expand">
+        <ul class="navbar-nav">
+          <li class="nav-item" v-for="name in list">
+            <a class="nav-link" @click="showDetail(name)">{{ name }}</a>
+          </li>
+        </ul>
+      </nav>
+      <div class="tab-content font-weight-bold" style="padding: 30px;">
+        {{ detail }}
+      </div>
+    </div>
   </body>
-  <script src="//zeptojs.com/zepto.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/vue"></script>
+  <script src="//cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script>
-    $('#list').on('click', 'li', evt => {
-      $('#list li a').removeClass('active');
-      $(evt.target).addClass('active');
-
-      const name = evt.target.innerText;
-      $.get(`/api/projects/detail?name=${name}`, data => {
-        $('#detail').html(data.desc);
-      });
-    });
-
-    $.get('/api/projects', data => {
-      const html = data.list.map(str => {
-        return `<li class="nav-item"><a class="nav-link">${str}</a></li>`;
-      });
-      $('#list').html(html);
+    new Vue({
+      el: '#app',
+      data: {
+        list: [],
+        detail: 'click title to see detail',
+      },
+      methods: {
+        listData() {
+          axios.get('/api/projects').then(res => {
+            this.list = res.data.list;
+          });
+        },
+        showDetail(name) {
+          this.detail = 'Loading...';
+          axios.get(`/api/projects/detail?name=${name}`).then(res => {
+            this.detail = res.data.desc;
+          });
+        }
+      },
+      mounted() {
+        this.listData();
+      }
     });
   </script>
 </html>
