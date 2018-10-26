@@ -2,11 +2,11 @@
   "name": "express-example",
   "version": "1.0.0",
   "description": "showcase for express",
-  "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
   "dependencies": {
-    "express": "^4.16.4"
+    "express": "^4.16.4",
+    "cookie-parser": "^1.4.3"
   }
 }

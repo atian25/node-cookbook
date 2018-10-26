@@ -19,29 +19,5 @@
   </body>
   <script src="//cdn.jsdelivr.net/npm/vue"></script>
   <script src="//cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script>
-    new Vue({
-      el: '#app',
-      data: {
-        list: [],
-        detail: 'click title to see detail',
-      },
-      methods: {
-        listData() {
-          axios.get('/api/projects').then(res => {
-            this.list = res.data.list;
-          });
-        },
-        showDetail(name) {
-          this.detail = 'Loading...';
-          axios.get(`/api/projects/detail?name=${name}`).then(res => {
-            this.detail = res.data.desc;
-          });
-        }
-      },
-      mounted() {
-        this.listData();
-      }
-    });
-  </script>
+  <script src="/public/main.js"></script>
 </html>

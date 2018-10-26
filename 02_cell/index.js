@@ -6,14 +6,18 @@ const path = require('path');
 const Cell = require('./lib/cell');
 const app = new Cell();
 
-// 路由映射
-
 // 打印访问日志
 app.use((req, res, next) => {
   console.log(`visit ${req.url}`);
   next(); // 继续执行后续逻辑
 });
 
+// 支持正则表达式
+app.use(/\/api\/.*/, (req, res, next) => {
+  setTimeout(next, 300); // 延迟返回，用于测试
+});
+
+// 路由映射
 app.get('/', (req, res) => {
   res.statusCode = 200;
   res.setHeader('Content-Type', 'text/html');

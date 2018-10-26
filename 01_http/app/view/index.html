@@ -24,12 +24,13 @@
       el: '#app',
       data: {
         list: [],
-        detail: 'click title to see detail',
+        detail: '',
       },
       methods: {
         listData() {
           axios.get('/api/projects').then(res => {
             this.list = res.data.list;
+            this.detail = 'click title to see detail';
           });
         },
         showDetail(name) {

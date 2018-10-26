@@ -9,8 +9,17 @@ module.exports = class Cell {
   }
 
   // 挂载中间件
-  use(fn) {
-    this.middlewares.push({ fn });
+  use(pattern, fn) {
+    // 支持单个入参 `use(fn)` 形式
+    if (fn === undefined && typeof pattern === 'function') {
+      fn = pattern;
+      pattern = undefined;
+    }
+    // 保存
+    this.middlewares.push({
+      pattern,
+      fn,
+    });
   }
 
   // 挂载路由
@@ -33,6 +42,7 @@ module.exports = class Cell {
     if (typeof pattern === 'string') {
       return urlObj.pathname === pattern;
     } else if (pattern instanceof RegExp) {
+      // 支持正则
       return pattern.test(urlObj.pathname);
     }
   }
