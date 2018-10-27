@@ -3,8 +3,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const Cell = require('./lib/cell');
-const app = new Cell();
+const Micro = require('./lib/micro');
+const app = new Micro();
 
 // 打印访问日志
 app.use((req, res, next) => {
