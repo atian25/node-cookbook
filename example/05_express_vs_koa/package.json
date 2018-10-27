@@ -1,0 +1,9 @@
+{
+  "name": "express_vs_koa",
+  "version": "1.0.0",
+  "description": "showcase for express_vs_koa",
+  "dependencies": {
+    "express": "^4.16.4",
+    "koa": "^2.6.1"
+  }
+}
