@@ -1,12 +1,12 @@
 {
-  "name": "example",
+  "name": "node-cookbook",
   "version": "1.0.0",
   "description": "",
   "author": "TZ <atian25@qq.com>",
   "scripts": {
     "lint": "eslint . --fix"
   },
-  "homepage": "https://github.com/atian25/example",
+  "homepage": "https://github.com/atian25/node-cookbook",
   "devDependencies": {
     "eslint": "^5.7.0",
     "eslint-config-egg": "^7.1.0"
@@ -17,7 +17,7 @@
   "eslintIgnore": [ "**/node_modules/" ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/atian25/example.git"
+    "url": "git+https://github.com/atian25/node-cookbook.git"
   },
   "keywords": [
     "Node",

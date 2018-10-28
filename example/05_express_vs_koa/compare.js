@@ -1,17 +1,39 @@
 'use strict';
 /* eslint no-undef:0, no-unused-vars:0 */
 
-app.get('/', function(req, res) {
-  db.user.get(req.query.name, function(user) {
-    db.game.list(user.id, function(gameList) {
-      db.news.list(gameList, function(news) {
-        res.json({
-          id: user.id,
-          list: news,
-        });
+app.get('/express', (req, res, next) => {
+  const id = req.query.id;
+
+  // error handler
+  const errorHanlder = err => {
+    console.error(err);
+    res.json({ success: false, err });
+  };
+
+  db.connect(host, (err, client) => { // connect to db
+    if (err) return errorHanlder(err); // **need to process error every callback**
+    client.user.get(id, (err, user) => { // fetch user info
+      if (err) return errorHanlder(err);
+      client.article.list({ id: user.id }, (err, articleList) => { // list user's articles
+        if (err) return errorHanlder(err);
+        res.send({ success: true, id, user, articleList }); // pack and response data
       });
     });
   });
+});
+
+app.get('/koa', async (ctx, next) => {
+  const id = req.query.id;
+  try {
+    const client = await db.connect(host); // connect to db
+    const user = await client.user.get(id); // fetch user info
+    const articleList = await client.article.list({ id: user.id }); // list user's articles
+    ctx.body = { success: true, id, user, articleList }; // pack and response data
+  } catch (err) {
+    // handler error once and like sync coding way
+    console.error(err);
+    ctx.body = { success: false, err };
+  }
 });
 
 function doByCallback2(id, next) {
