@@ -1,42 +1,68 @@
 <html>
   <head>
     <title>Node.js</title>
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.min.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/vue-material@1.0.0-beta-10.2/dist/vue-material.min.css">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/vue-material@1.0.0-beta-10.2/dist/theme/default.css">
+    <!-- <link rel="stylesheet" href="//fonts.loli.net/css?family=Roboto:400,500,700,400italic|Material+Icons"> -->
+
+    <style>
+      .md-list {
+        width: 400px;
+        max-width: 100%;
+        display: inline-block;
+        vertical-align: top;
+        border: 1px solid rgba(#000, .12);
+      }
+    </style>
   </head>
   <body>
-    <div id="app">
-      <nav class="navbar navbar-dark bg-dark navbar-expand">
-        <ul class="navbar-nav">
-          <li class="nav-item" v-for="name in list">
-            <a class="nav-link" @click="showDetail(name)">{{ name }}</a>
-          </li>
-        </ul>
-      </nav>
-      <div class="tab-content font-weight-bold" style="padding: 30px;">
-        {{ detail }}
-      </div>
+    <div id="app" style="height: 100px; width: 400px;">
+      <md-toolbar class="md-primary">
+        <span class="md-title">Node.js Frameworks</span>
+      </md-toolbar>
+      <!-- Framework list-->
+      <md-list class="md-triple-line">
+        <template v-for="item in list">
+          <md-list-item>
+            <md-avatar>
+              <img :src="'https://via.placeholder.com/40x40.png?text=' + item.name">
+            </md-avatar>
+
+            <div class="md-list-item-text">
+              <span>{{ item.name }}</span>
+              <p style="color:#999; padding-top:3px;">{{ item.description }}</p>
+            </div>
+
+            <md-button class="md-raised md-primary" v-if="item.star" @click="toggleStar(item)">Unstar</md-button>
+            <md-button class="md-raised" v-if="!item.star" @click="toggleStar(item)">Star</md-button>
+          </md-list-item>
+
+          <md-divider class="md-inset"></md-divider>
+        </template>
+      </md-list>
     </div>
   </body>
   <script src="//cdn.jsdelivr.net/npm/vue"></script>
   <script src="//cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/vue-material@1.0.0-beta-10.2/dist/vue-material.min.js"></script>
   <script>
+    Vue.use(VueMaterial.default);
     new Vue({
       el: '#app',
       data: {
         list: [],
-        detail: '',
       },
       methods: {
         listData() {
-          axios.get('/api/projects').then(res => {
+          axios.get('/api/framework').then(res => {
             this.list = res.data.list;
-            this.detail = 'click title to see detail';
           });
         },
-        showDetail(name) {
-          this.detail = 'Loading...';
-          axios.get(`/api/projects/detail?name=${name}`).then(res => {
-            this.detail = res.data.desc;
+        toggleStar(item) {
+          axios.post('/api/framework/toggle', { name: item.name, star: !item.star }).then(res => {
+            Object.assign(item, res.data);
           });
         }
       },

@@ -5,13 +5,20 @@ const fs = require('fs');
 const path = require('path');
 const URL = require('url');
 
+// 简化示例，直接全局变量存储数据。
+const frameworkList = [
+  { name: 'Express', description: 'this is detail of Express', star: false },
+  { name: 'Koa', description: 'this is detail of Koa', star: true },
+  { name: 'Egg', description: 'this is detail of Egg', star: true },
+];
+
 // 业务逻辑处理
 function handler(req, res) {
   const urlObj = URL.parse(req.url, true);
   const pathName = urlObj.pathname;
 
   // 打印访问日志
-  console.log(`request api: ${req.url}`);
+  console.log(`request api: ${req.method} ${req.url}`);
 
   // 根据 URL 返回不同的内容
   if (pathName === '/') {
@@ -19,27 +26,42 @@ function handler(req, res) {
     res.setHeader('Content-Type', 'text/html');
     // 注意：此处为简化示例，一般需要缓存，且一定不能使用 Sync 同步方法
     const html = fs.readFileSync(path.join(__dirname, 'app/view/index.html'));
-    return res.end(html);
+    res.end(html);
+    return;
   }
 
-  if (pathName === '/api/projects') {
+  if (pathName === '/api/framework') {
     const data = {
-      list: [ 'Node', 'Koa', 'Egg' ],
+      list: frameworkList,
     };
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
-    return res.end(JSON.stringify(data, null, 2));
+    res.end(JSON.stringify(data, null, 2));
+    return;
   }
 
-  if (pathName === '/api/projects/detail') {
-    const name = urlObj.query.name || 'unknown';
-    const data = {
-      name,
-      desc: `this is detail of ${name}`,
-    };
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/json');
-    return res.end(JSON.stringify(data, null, 2));
+  // POST 请求，入参为 { name, star }
+  if (req.method === 'POST' && pathName === '/api/framework/toggle') {
+    // 需监听事件接收 POST Body
+    let body = '';
+    req.on('data', chunk => {
+      body += chunk.toString();
+    });
+    req.on('end', () => {
+      // 解析 Body
+      const { name, star } = JSON.parse(body);
+
+      // 查询找到 framework 对象，并更新状态
+      const data = frameworkList.find(x => x.name === name);
+      data.star = star;
+
+      // 发送响应
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      return res.end(JSON.stringify(data));
+    });
+    // 别忘了跳过后续路由
+    return;
   }
 
   // 兜底处理
