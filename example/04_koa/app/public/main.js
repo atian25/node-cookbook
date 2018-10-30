@@ -10,12 +10,12 @@ new Vue({
   },
   methods: {
     listData() {
-      axios.get('/api/framework').then(res => {
+      axios.get('/api/project').then(res => {
         this.list = res.data.list;
       });
     },
     toggleStar(item) {
-      axios.post('/api/framework/toggle', { name: item.name, star: !item.star }).then(res => {
+      axios.post('/api/project/toggle', { name: item.name, star: !item.star }).then(res => {
         Object.assign(item, res.data);
       });
     },

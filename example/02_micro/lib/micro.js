@@ -45,13 +45,13 @@ module.exports = class Cell {
     if (method && method !== req.method) return false;
     if (!pattern) return true;
 
-    const urlObj = URL.parse(req.url, true);
+    const { pathname } = req;
 
     if (typeof pattern === 'string') {
-      return urlObj.pathname === pattern;
+      return pathname === pattern;
     } else if (pattern instanceof RegExp) {
       // 支持正则
-      return pattern.test(urlObj.pathname);
+      return pattern.test(pathname);
     }
   }
 

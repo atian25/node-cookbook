@@ -6,7 +6,7 @@ const path = require('path');
 const URL = require('url');
 
 // 简化示例，直接全局变量存储数据。
-const frameworkList = [
+const projectList = [
   { name: 'Express', description: 'this is detail of Express', star: false },
   { name: 'Koa', description: 'this is detail of Koa', star: true },
   { name: 'Egg', description: 'this is detail of Egg', star: true },
@@ -30,9 +30,9 @@ function handler(req, res) {
     return;
   }
 
-  if (pathName === '/api/framework') {
+  if (pathName === '/api/project') {
     const data = {
-      list: frameworkList,
+      list: projectList,
     };
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
@@ -41,7 +41,7 @@ function handler(req, res) {
   }
 
   // POST 请求，入参为 { name, star }
-  if (req.method === 'POST' && pathName === '/api/framework/toggle') {
+  if (req.method === 'POST' && pathName === '/api/project/toggle') {
     // 需监听事件接收 POST Body
     const body = [];
 
@@ -53,8 +53,8 @@ function handler(req, res) {
       // 解析 Body
       const { name, star } = JSON.parse(Buffer.concat(body).toString());
 
-      // 查询找到 framework 对象，并更新状态
-      const data = frameworkList.find(x => x.name === name);
+      // 查询找到 project 对象，并更新状态
+      const data = projectList.find(x => x.name === name);
       data.star = star;
 
       // 发送响应
