@@ -8,6 +8,10 @@
     <!-- <link rel="stylesheet" href="//fonts.loli.net/css?family=Roboto:400,500,700,400italic|Material+Icons"> -->
 
     <style>
+      #app {
+        height: 100px;
+        width: 400px;
+      }
       .md-list {
         width: 400px;
         max-width: 100%;
@@ -15,10 +19,14 @@
         vertical-align: top;
         border: 1px solid rgba(#000, .12);
       }
+      .description {
+        color:#999;
+        padding-top:3px;
+      }
     </style>
   </head>
   <body>
-    <div id="app" style="height: 100px; width: 400px;">
+    <div id="app">
       <md-toolbar class="md-primary">
         <span class="md-title">Node.js Frameworks</span>
       </md-toolbar>
@@ -32,7 +40,7 @@
 
             <div class="md-list-item-text">
               <span>{{ item.name }}</span>
-              <p style="color:#999; padding-top:3px;">{{ item.description }}</p>
+              <p class="description">{{ item.description }}</p>
             </div>
 
             <md-button class="md-raised md-primary" v-if="item.star" @click="toggleStar(item)">Unstar</md-button>

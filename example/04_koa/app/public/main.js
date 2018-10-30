@@ -1,23 +1,22 @@
 'use strict';
-/* global Vue:false, axios:false */
+/* global Vue:false, VueMaterial: false, axios:false */
+
+Vue.use(VueMaterial.default);
 
 new Vue({
   el: '#app',
   data: {
     list: [],
-    detail: '',
   },
   methods: {
     listData() {
-      axios.get('/api/projects').then(res => {
+      axios.get('/api/framework').then(res => {
         this.list = res.data.list;
-        this.detail = 'click title to see detail';
       });
     },
-    showDetail(name) {
-      this.detail = 'Loading...';
-      axios.get(`/api/projects/detail?name=${name}`).then(res => {
-        this.detail = res.data.desc;
+    toggleStar(item) {
+      axios.post('/api/framework/toggle', { name: item.name, star: !item.star }).then(res => {
+        Object.assign(item, res.data);
       });
     },
   },

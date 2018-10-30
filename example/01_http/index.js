@@ -25,7 +25,7 @@ function handler(req, res) {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'text/html');
     // 注意：此处为简化示例，一般需要缓存，且一定不能使用 Sync 同步方法
-    const html = fs.readFileSync(path.join(__dirname, 'app/view/index.html'));
+    const html = fs.readFileSync(path.join(__dirname, 'view/index.html'));
     res.end(html);
     return;
   }
@@ -36,20 +36,20 @@ function handler(req, res) {
     };
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(data, null, 2));
+    res.end(JSON.stringify(data));
     return;
   }
 
   // POST 请求，入参为 { name, star }
   if (req.method === 'POST' && pathName === '/api/framework/toggle') {
     // 需监听事件接收 POST Body
-    let body = '';
+    const body = [];
     req.on('data', chunk => {
-      body += chunk.toString();
+      body.push(chunk);
     });
     req.on('end', () => {
       // 解析 Body
-      const { name, star } = JSON.parse(body);
+      const { name, star } = JSON.parse(Buffer.concat(body).toString());
 
       // 查询找到 framework 对象，并更新状态
       const data = frameworkList.find(x => x.name === name);
