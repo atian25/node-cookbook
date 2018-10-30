@@ -36,7 +36,9 @@ app.get('/api/framework', (req, res) => {
 });
 
 // 解析 Body，存到 `req.body` 供后续中间件使用
-app.use(/\/api\/.*/, (req, res, next) => {
+app.use((req, res, next) => {
+  if (req.method !== 'POST') return next();
+
   const body = [];
 
   req.on('data', chunk => {
@@ -61,7 +63,7 @@ app.post('/api/framework/toggle', (req, res) => {
   // 发送响应
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify(data));
+  res.json(data);
 });
 
 // 兜底处理
