@@ -1,0 +1,82 @@
+<html>
+  <head>
+    <title>Node.js</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/vue-material@1.0.0-beta-10.2/dist/vue-material.min.css">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/vue-material@1.0.0-beta-10.2/dist/theme/default.css">
+    <!-- <link rel="stylesheet" href="//fonts.loli.net/css?family=Roboto:400,500,700,400italic|Material+Icons"> -->
+
+    <style>
+      #app {
+        height: 100px;
+        width: 400px;
+      }
+      .md-list {
+        width: 400px;
+        max-width: 100%;
+        display: inline-block;
+        vertical-align: top;
+        border: 1px solid rgba(#000, .12);
+      }
+      .description {
+        color:#999;
+        padding-top:3px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <md-toolbar class="md-primary">
+        <span class="md-title">Node.js Frameworks</span>
+      </md-toolbar>
+      <!-- Framework list-->
+      <md-list class="md-triple-line">
+        <template v-for="item in list">
+          <md-list-item>
+            <md-avatar>
+              <img :src="'https://via.placeholder.com/40x40.png?text=' + item.name">
+            </md-avatar>
+
+            <div class="md-list-item-text">
+              <span>{{ item.name }}</span>
+              <p class="description">{{ item.description }}</p>
+            </div>
+
+            <md-button class="md-raised md-primary" v-if="item.star" @click="toggleStar(item)">Unstar</md-button>
+            <md-button class="md-raised" v-if="!item.star" @click="toggleStar(item)">Star</md-button>
+          </md-list-item>
+
+          <md-divider class="md-inset"></md-divider>
+        </template>
+      </md-list>
+    </div>
+  </body>
+  <script src="//cdn.jsdelivr.net/npm/vue"></script>
+  <script src="//cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/vue-material@1.0.0-beta-10.2/dist/vue-material.min.js"></script>
+  <script>
+    Vue.use(VueMaterial.default);
+    new Vue({
+      el: '#app',
+      data: {
+        list: [],
+      },
+      methods: {
+        listData() {
+          axios.get('/api/framework').then(res => {
+            this.list = res.data.list;
+          });
+        },
+        toggleStar(item) {
+          axios.post('/api/framework/toggle', { name: item.name, star: !item.star }).then(res => {
+            Object.assign(item, res.data);
+          });
+        }
+      },
+      mounted() {
+        this.listData();
+      }
+    });
+  </script>
+</html>

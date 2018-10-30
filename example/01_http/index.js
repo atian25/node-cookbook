@@ -18,7 +18,7 @@ function handler(req, res) {
   const pathName = urlObj.pathname;
 
   // 打印访问日志
-  console.log(`request api: ${req.method} ${req.url}`);
+  console.log(`visit: ${req.method} ${req.url}`);
 
   // 根据 URL 返回不同的内容
   if (pathName === '/') {
@@ -44,9 +44,11 @@ function handler(req, res) {
   if (req.method === 'POST' && pathName === '/api/framework/toggle') {
     // 需监听事件接收 POST Body
     const body = [];
+
     req.on('data', chunk => {
       body.push(chunk);
     });
+
     req.on('end', () => {
       // 解析 Body
       const { name, star } = JSON.parse(Buffer.concat(body).toString());

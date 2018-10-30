@@ -31,6 +31,14 @@ module.exports = class Cell {
     });
   }
 
+  post(pattern, fn) {
+    this.middlewares.push({
+      method: 'POST',
+      pattern,
+      fn,
+    });
+  }
+
   // 路由匹配
   _match(req, rule) {
     const { pattern, method } = rule;

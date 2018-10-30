@@ -6,15 +6,17 @@ const path = require('path');
 const Micro = require('./lib/micro');
 const app = new Micro();
 
+// 简化示例，直接全局变量存储数据。
+const frameworkList = [
+  { name: 'Express', description: 'this is detail of Express', star: false },
+  { name: 'Koa', description: 'this is detail of Koa', star: true },
+  { name: 'Egg', description: 'this is detail of Egg', star: true },
+];
+
 // 打印访问日志
 app.use((req, res, next) => {
-  console.log(`visit ${req.url}`);
+  console.log(`visit: ${req.method} ${req.url}`);
   next(); // 继续执行后续逻辑
-});
-
-// 支持正则表达式
-app.use(/\/api\/.*/, (req, res, next) => {
-  setTimeout(next, 300); // 延迟返回，用于测试
 });
 
 // 路由映射
@@ -22,24 +24,44 @@ app.get('/', (req, res) => {
   res.statusCode = 200;
   res.setHeader('Content-Type', 'text/html');
   // 注意：此处为简化示例，一般需要缓存，且一定不能使用 Sync 同步方法
-  const html = fs.readFileSync(path.join(__dirname, 'app/view/index.html'));
+  const html = fs.readFileSync(path.join(__dirname, 'view/index.html'));
   return res.end(html);
 });
 
-app.get('/api/projects', (req, res) => {
+app.get('/api/framework', (req, res) => {
   const data = {
-    list: [ 'Node', 'Koa', 'Egg' ],
+    list: frameworkList,
   };
   res.json(data);
 });
 
-app.get('/api/projects/detail', (req, res) => {
-  const name = req.query.name || 'unknown';
-  const data = {
-    name,
-    desc: `this is detail of ${name}`,
-  };
-  res.json(data);
+// 解析 Body，存到 `req.body` 供后续中间件使用
+app.use(/\/api\/.*/, (req, res, next) => {
+  const body = [];
+
+  req.on('data', chunk => {
+    body.push(chunk);
+  });
+
+  req.on('end', () => {
+    // 解析 Body，存到 `req.body` 供后续中间件使用
+    req.body = JSON.parse(Buffer.concat(body).toString());
+    next();
+  });
+});
+
+app.post('/api/framework/toggle', (req, res) => {
+  // 上一个中间件的产物
+  const { name, star } = req.body;
+
+  // 查询找到 framework 对象，并更新状态
+  const data = frameworkList.find(x => x.name === name);
+  data.star = star;
+
+  // 发送响应
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify(data));
 });
 
 // 兜底处理
