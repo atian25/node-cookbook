@@ -6,7 +6,7 @@ const options = {
   method: 'POST',
   hostname: 'localhost',
   port: 3000,
-  path: '/api/star?id=12345',
+  path: '/api/update?id=12345',
   headers: {
     'User-Agent': 'node_http',
     'Content-Type': 'application/json',
@@ -15,7 +15,7 @@ const options = {
 
 // 结果处理
 function handler(res) {
-  // log: /api/star?id=12345
+  // log: /api/update?id=12345
   console.log('> request path:', res.req.path);
 
   // log: 200
@@ -30,7 +30,7 @@ function handler(res) {
     rawData.push(chunk);
   });
   res.on('end', () => {
-    // log: { key: 'Node.js', desc: 'a JavaScript runtime built on V8' }
+    // log: { id: '12345', title: 'Learn Node.js' }
     const data = JSON.parse(rawData);
     console.log('> response body:', data);
   });
@@ -39,5 +39,5 @@ function handler(res) {
 // 发起请求
 const req = http.request(options, handler);
 req.on('error', err => { console.error('> http error:', err); });
-req.write(JSON.stringify({ key: 'Node.js' }));
+req.write(JSON.stringify({ title: 'Learn Node.js' }));
 req.end();

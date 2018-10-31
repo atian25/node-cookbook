@@ -9,7 +9,7 @@ const bodyParser = require('body-parser');
 // 引入处理逻辑
 const home = require('./controller/home');
 const notFound = require('./controller/not_found');
-const project = require('./controller/project');
+const todo = require('./controller/todo');
 
 // 实例化应用
 const app = new express();
@@ -26,8 +26,9 @@ app.use((req, res, next) => {
 
 // 路由映射
 app.get('/', home);
-app.get('/api/project', project.list);
-app.post('/api/project/toggle', project.toggle);
+app.get('/api/list', todo.list);
+app.post('/api/update', todo.update);
+app.delete('/api/remove', todo.remove);
 app.use(notFound);
 
 // 启动服务

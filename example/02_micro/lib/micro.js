@@ -6,6 +6,13 @@ const URL = require('url');
 module.exports = class Cell {
   constructor() {
     this.middlewares = [];
+
+    // 注册语法糖，app.get() / app.post()
+    for (const method of [ 'GET', 'POST', 'DELETE', 'PUT', 'HEAD' ]) {
+      this[method.toLowerCase()] = (pattern, fn) => {
+        this.middlewares.push({ method, pattern, fn });
+      };
+    }
   }
 
   // 挂载中间件
@@ -17,23 +24,6 @@ module.exports = class Cell {
     }
     // 保存
     this.middlewares.push({
-      pattern,
-      fn,
-    });
-  }
-
-  // 挂载路由
-  get(pattern, fn) {
-    this.middlewares.push({
-      method: 'GET',
-      pattern,
-      fn,
-    });
-  }
-
-  post(pattern, fn) {
-    this.middlewares.push({
-      method: 'POST',
       pattern,
       fn,
     });

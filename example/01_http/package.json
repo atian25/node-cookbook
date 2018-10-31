@@ -1,0 +1,8 @@
+{
+  "name": "http-example",
+  "version": "1.0.0",
+  "description": "showcase for http",
+  "scripts": {
+    "start": "node index.js"
+  }
+}

@@ -10,12 +10,12 @@ function handler(req, res) {
   // log: { 'user-agent': 'node_http', 'content-type': 'application/json' }
   console.log('> headers:', req.headers);
 
-  // log: `/api/star?id=12345`
+  // log: `/api/update?id=12345`
   console.log('> url:', req.url);
 
   const urlObj = URL.parse(req.url, true);
 
-  // log: `/api/star`
+  // log: `/api/update`
   console.log('> path:', urlObj.pathname);
 
   // log: { id: '12345' }
@@ -27,13 +27,14 @@ function handler(req, res) {
     body.push(chunk);
   }).on('end', () => {
     body = Buffer.concat(body).toString();
-    // log: { key: 'Node.js' }
-    console.log('> body:', JSON.parse(body));
+    body = JSON.parse(body);
+    // log: { title: 'Learn Node.js' }
+    console.log('> body:', body);
 
     // send response
-    const data = { key: 'Node.js', desc: 'a JavaScript runtime built on V8' };
-    res.setHeader('Content-Type', 'application/json');
+    const data = { id: urlObj.query.id, title: body.title };
     res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify(data));
   });
 }

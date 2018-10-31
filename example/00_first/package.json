@@ -1,0 +1,8 @@
+{
+  "name": "first-example",
+  "version": "1.0.0",
+  "description": "showcase for chapter",
+  "scripts": {
+    "start": "node index.js"
+  }
+}

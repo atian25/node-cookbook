@@ -7,10 +7,10 @@ const Micro = require('./lib/micro');
 const app = new Micro();
 
 // 简化示例，直接全局变量存储数据。
-const projectList = [
-  { name: 'Express', description: 'this is detail of Express', star: false },
-  { name: 'Koa', description: 'this is detail of Koa', star: true },
-  { name: 'Egg', description: 'this is detail of Egg', star: true },
+const todoList = [
+  { id: 1, title: 'Forgot Express', completed: true },
+  { id: 2, title: 'Learn Koa', completed: true },
+  { id: 3, title: 'Learn Egg', completed: false },
 ];
 
 // 打印访问日志
@@ -28,16 +28,24 @@ app.get('/', (req, res) => {
   return res.end(html);
 });
 
-app.get('/api/project', (req, res) => {
-  const data = {
-    list: projectList,
-  };
-  res.json(data);
+// 查询列表，支持过滤
+app.get('/api/list', (req, res) => {
+  const { query } = req;
+  let data = todoList;
+
+  // 查询列表，支持过滤参数 `/api/list?completed=true`
+  if (query.completed !== undefined) {
+    query.completed = query.completed === 'true';
+    data = todoList.filter(x => x.completed === query.completed);
+  }
+
+  // 发送响应
+  return res.json(data);
 });
 
 // 解析 Body，存到 `req.body` 供后续中间件使用
 app.use((req, res, next) => {
-  if (req.method !== 'POST') return next();
+  if (req.method !== 'POST' && req.method !== 'PUT') return next();
 
   const body = [];
 
@@ -52,24 +60,46 @@ app.use((req, res, next) => {
   });
 });
 
-app.post('/api/project/toggle', (req, res) => {
+// 更新操作
+app.post('/api/update', (req, res) => {
   // 上一个中间件的产物
-  const { name, star } = req.body;
+  let todo = req.body;
 
-  // 查询找到 project 对象，并更新状态
-  const data = projectList.find(x => x.name === name);
-  data.star = star;
+  if (!todo.id) {
+    // 无 ID 则新增
+    todo.id = Date.now();
+    todo.completed = false;
+    todoList.push(todo);
+  } else {
+    // 修改，查找 todo 对象，并更新状态
+    const data = todoList.find(x => x.id === todo.id);
+    todo = Object.assign(data, todo);
+  }
 
   // 发送响应
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'application/json');
-  res.json(data);
+  return res.json(todo);
+});
+
+// 删除操作
+app.delete('/api/remove', (req, res) => {
+  const id = Number(req.query.id);
+  const index = todoList.findIndex(x => x.id === id);
+  // not found
+  if (index === -1) {
+    res.statusCode = 404;
+    res.statusMessage = `task#${id} not found`;
+    return res.end();
+  }
+  // deleted
+  todoList.splice(index, 1);
+  res.statusCode = 204;
+  return res.end();
 });
 
 // 兜底处理
 app.use((req, res) => {
   res.statusCode = 404;
-  res.end(`${req.url} not found`);
+  res.end(`${req.method} ${req.url} not found`);
 });
 
 // 启动服务

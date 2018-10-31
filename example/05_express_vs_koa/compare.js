@@ -14,9 +14,13 @@ app.get('/express', (req, res, next) => {
     if (err) return errorHanlder(err); // **need to process error every callback**
     client.user.get(id, (err, user) => { // fetch user info
       if (err) return errorHanlder(err);
-      client.article.list({ id: user.id }, (err, articleList) => { // list user's articles
+      client.task.list({ id: user.id }, (err, taskList) => { // list task
         if (err) return errorHanlder(err);
-        res.send({ success: true, id, user, articleList }); // pack and response data
+        res.send({ // response data
+          id,
+          user,
+          taskList,
+        });
       });
     });
   });
