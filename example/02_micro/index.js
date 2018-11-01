@@ -8,9 +8,9 @@ const app = new Micro();
 
 // 简化示例，直接全局变量存储数据。
 const todoList = [
-  { id: 1, title: 'Forgot Express', completed: true },
-  { id: 2, title: 'Learn Koa', completed: true },
-  { id: 3, title: 'Learn Egg', completed: false },
+  { id: '1', title: 'Forgot Express', completed: true },
+  { id: '2', title: 'Learn Koa', completed: true },
+  { id: '3', title: 'Learn Egg', completed: false },
 ];
 
 // 打印访问日志
@@ -21,25 +21,27 @@ app.use((req, res, next) => {
 
 // 路由映射
 app.get('/', (req, res) => {
-  res.statusCode = 200;
+  res.status(200);
   res.setHeader('Content-Type', 'text/html');
   // 注意：此处为简化示例，一般需要缓存，且一定不能使用 Sync 同步方法
   const html = fs.readFileSync(path.join(__dirname, 'view/index.html'));
   return res.end(html);
 });
 
-// 查询列表，支持过滤
-app.get('/api/list', (req, res) => {
+// 查询列表，支持过滤 `/api/todo?completed=true`
+app.get('/api/todo', (req, res) => {
   const { query } = req;
   let data = todoList;
 
-  // 查询列表，支持过滤参数 `/api/list?completed=true`
+  // 查询列表，从而过滤参数
   if (query.completed !== undefined) {
+    // query 参数均为字符串，需转换
     query.completed = query.completed === 'true';
     data = todoList.filter(x => x.completed === query.completed);
   }
 
   // 发送响应
+  res.status(200);
   return res.json(data);
 });
 
@@ -60,45 +62,69 @@ app.use((req, res, next) => {
   });
 });
 
-// 更新操作
-app.post('/api/update', (req, res) => {
+// 创建任务
+app.post('/api/todo', (req, res) => {
   // 上一个中间件的产物
-  let todo = req.body;
+  const todo = req.body;
 
-  if (!todo.id) {
-    // 无 ID 则新增
-    todo.id = Date.now();
-    todo.completed = false;
-    todoList.push(todo);
-  } else {
-    // 修改，查找 todo 对象，并更新状态
-    const data = todoList.find(x => x.id === todo.id);
-    todo = Object.assign(data, todo);
-  }
+  // 补全数据，保存
+  todo.id = Date.now().toString();
+  todo.completed = false;
+  todoList.push(todo);
 
   // 发送响应
-  return res.json(todo);
+  res.status(201);
+  res.json(todo);
 });
 
-// 删除操作
-app.delete('/api/remove', (req, res) => {
-  const id = Number(req.query.id);
-  const index = todoList.findIndex(x => x.id === id);
-  // not found
+// 修改任务
+app.put('/api/todo', (req, res) => {
+  // 上一个中间件的产物
+  let todo = req.body;
+  const { id } = todo;
+
+  // 查找对应 ID 的任务对象
+  const index = id ? todoList.findIndex(x => x.id === id) : -1;
+
+  // 未找到
   if (index === -1) {
-    res.statusCode = 404;
+    res.status(404);
     res.statusMessage = `task#${id} not found`;
     return res.end();
   }
-  // deleted
+
+  // 修改 todo 对象，并更新状态
+  todo = Object.assign(todoList[index], todo);
+
+  // 发送响应
+  res.status(204);
+  return res.end();
+});
+
+// 删除任务
+app.delete(/^\/api\/todo\/(\d+)$/, (req, res) => {
+  // 框架从 URL 中用正则式匹配出 ID，存到了 `req.params` 中
+  const id = req.params[0];
+
+  // 查找对应 ID 的任务对象
+  const index = id ? todoList.findIndex(x => x.id === id) : -1;
+
+  // 未找到
+  if (index === -1) {
+    res.status(404);
+    res.statusMessage = `task#${id} not found`;
+    return res.end();
+  }
+
+  // 删除对象
   todoList.splice(index, 1);
-  res.statusCode = 204;
+  res.status(204);
   return res.end();
 });
 
 // 兜底处理
 app.use((req, res) => {
-  res.statusCode = 404;
+  res.status(404);
   res.end(`${req.method} ${req.url} not found`);
 });
 

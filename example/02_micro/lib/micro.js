@@ -3,14 +3,15 @@
 const http = require('http');
 const URL = require('url');
 
-module.exports = class Cell {
+module.exports = class Micro {
   constructor() {
     this.middlewares = [];
 
     // 注册语法糖，app.get() / app.post()
-    for (const method of [ 'GET', 'POST', 'DELETE', 'PUT', 'HEAD' ]) {
+    for (const method of [ 'GET', 'POST', 'DELETE', 'PUT', 'HEAD', 'PATCH' ]) {
       this[method.toLowerCase()] = (pattern, fn) => {
         this.middlewares.push({ method, pattern, fn });
+        return this;
       };
     }
   }
@@ -27,6 +28,8 @@ module.exports = class Cell {
       pattern,
       fn,
     });
+    // 返回自己，方便链式调用
+    return this;
   }
 
   // 路由匹配
@@ -40,8 +43,13 @@ module.exports = class Cell {
     if (typeof pattern === 'string') {
       return pathname === pattern;
     } else if (pattern instanceof RegExp) {
-      // 支持正则
-      return pattern.test(pathname);
+      // 正则式表达式
+      const match = pathname.match(pattern);
+      if (!match) return false;
+
+      // 把匹配的分组结果存入 `req.params`
+      req.params = match.slice(1);
+      return true;
     }
   }
 
@@ -54,9 +62,14 @@ module.exports = class Cell {
 
     // res
     res.json = data => {
-      res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify(data, null, 2));
+      return this;
+    };
+
+    res.status = code => {
+      res.statusCode = code;
+      return this;
     };
   }
 

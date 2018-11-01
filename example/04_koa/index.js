@@ -7,13 +7,15 @@ const bodyParser = require('koa-bodyparser');
 const Router = require('koa-router');
 
 // 引入处理逻辑
-const home = require('./controller/home');
-const notFound = require('./controller/not_found');
-const todo = require('./controller/todo');
+const accessLog = require('./middleware/access_log');
+const notFound = require('./middleware/not_found');
+const home = require('./middleware/home');
+const todo = require('./middleware/todo');
 
-// 根据 URL 返回不同的内容
+// 实例化应用
 const app = new Koa();
-const router = new Router();
+
+// 挂载中间件，无需区分前置后置
 
 // 静态资源
 app.use(staticCache({
@@ -23,23 +25,17 @@ app.use(staticCache({
   preload: false,
 }));
 
-// Body 解析
-app.use(bodyParser());
-
-// 打印访问日志
-app.use((ctx, next) => {
-  console.log(`visit ${ctx.url}`);
-  return next(); // 继续执行后续逻辑
-});
-
-// 兜底处理
-app.use(notFound);
+app.use(bodyParser()); // Body 解析
+app.use(accessLog); // 打印访问日志
+app.use(notFound); // 兜底处理
 
 // 路由映射
+const router = new Router();
 router.get('/', home);
-router.get('/api/list', todo.list);
-router.post('/api/update', todo.update);
-router.delete('/api/remove', todo.remove);
+router.get('/api/todo', todo.list);
+router.post('/api/todo', todo.add);
+router.put('/api/todo', todo.update);
+router.delete('/api/todo/:id(\\d+)', todo.remove);
 
 // 挂载路由
 app.use(router.routes());

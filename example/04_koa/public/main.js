@@ -12,7 +12,7 @@ new Vue({
   methods: {
     listData: function(completed) {
       // 简化处理，忽略错误处理和加载提示
-      axios.get('/api/list', { params: { completed } })
+      axios.get('/api/todo', { params: { completed } })
         .then(res => {
           this.todoList = res.data;
         });
@@ -27,7 +27,7 @@ new Vue({
         completed: false,
       };
 
-      axios.post('/api/update', item)
+      axios.post('/api/todo', item)
         .then(res => {
           this.todoList.push(res.data);
           this.newTodo = '';
@@ -36,18 +36,16 @@ new Vue({
 
     completeTodo: function(todo) {
       todo.completed = !todo.completed;
-      axios.post('/api/update', todo)
-        .then(res => {
-          Object.assign(todo, res.data);
+      axios.put('/api/todo', todo)
+        .then(() => {
           this.newTodo = '';
         });
     },
 
     removeTodo: function(todo) {
-      axios.delete(`/api/remove?id=${todo.id}`)
+      axios.delete(`/api/todo/${todo.id}`)
         .then(() => {
-          const id = Number(todo.id);
-          const index = this.todoList.findIndex(x => x.id === id);
+          const index = this.todoList.findIndex(x => x.id === todo.id);
           this.todoList.splice(index, 1);
         });
     },

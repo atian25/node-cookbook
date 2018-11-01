@@ -7,28 +7,27 @@ const path = require('path');
 const bodyParser = require('body-parser');
 
 // 引入处理逻辑
-const home = require('./controller/home');
-const notFound = require('./controller/not_found');
-const todo = require('./controller/todo');
+const accessLog = require('./middleware/access_log');
+const notFound = require('./middleware/not_found');
+const home = require('./middleware/home');
+const todo = require('./middleware/todo');
 
 // 实例化应用
 const app = new express();
 
 // 挂载中间件
-app.use(bodyParser.json());
 app.use('/public', express.static(path.join(__dirname, 'public')));
-
-// 打印访问日志
-app.use((req, res, next) => {
-  console.log(`visit ${req.url}`);
-  next(); // 继续执行后续逻辑
-});
+app.use(bodyParser.json());
+app.use(accessLog);
 
 // 路由映射
 app.get('/', home);
-app.get('/api/list', todo.list);
-app.post('/api/update', todo.update);
-app.delete('/api/remove', todo.remove);
+app.get('/api/todo', todo.list);
+app.post('/api/todo', todo.add);
+app.put('/api/todo', todo.update);
+app.delete('/api/todo/:id(\\d+)', todo.remove);
+
+// 挂载后置中间件
 app.use(notFound);
 
 // 启动服务
