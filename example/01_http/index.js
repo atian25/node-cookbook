@@ -24,7 +24,7 @@ function handler(req, res) {
   res.writeHead = (...args) => {
     const cost = Date.now() - start;
     res.setHeader('X-Response-Time', `${cost}ms`); // 返回到 Header
-    console.log(`Visit: ${method} ${url} ${cost}ms`); // 打印日志
+    console.log(`[Visit] ${method} ${url} ${res.statusCode} (${cost}ms)`); // 打印日志
     return originFn.call(res, ...args);
   };
 
@@ -32,10 +32,15 @@ function handler(req, res) {
   if (pathname === '/') {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'text/html');
-    // 注意：此处为简化示例，一般需要缓存，且一定不能使用 Sync 同步方法
-    const html = fs.readFileSync(path.join(__dirname, 'app/view/index.html'));
-    res.end(html);
-    return;
+
+    // 注意：此处为简化示例，一般需要缓存
+    const filePath = path.join(__dirname, 'app/view/index.html');
+    fs.readFile(filePath, (err, content) => {
+      if (err) return errorHandler(err, req, res);
+      res.end(content.toString());
+    });
+
+    return; // 别忘了跳过后续路由
   }
 
   // 查询列表，支持过滤 `/api/todo?completed=true`
@@ -58,15 +63,15 @@ function handler(req, res) {
   // POST 请求，创建任务
   if (method === 'POST' && pathname === '/api/todo') {
     // 需监听事件接收 Body
-    const body = [];
+    const buffer = [];
 
     req.on('data', chunk => {
-      body.push(chunk);
+      buffer.push(chunk);
     });
 
     req.on('end', () => {
       // 解析 Body， { id, title, completed }
-      const todo = JSON.parse(Buffer.concat(body).toString());
+      const todo = JSON.parse(Buffer.concat(buffer).toString());
 
       db.add(todo, (err, data) => {
         if (err) return errorHandler(err, req, res); // 错误处理
@@ -82,12 +87,15 @@ function handler(req, res) {
 
   // PUT 请求，修改任务
   if (method === 'PUT' && pathname === '/api/todo') {
-    const body = [];
-    req.on('data', chunk => { body.push(chunk); });
+    const buffer = [];
+
+    req.on('data', chunk => {
+      buffer.push(chunk);
+    });
 
     req.on('end', () => {
       // 解析 Body， { id, title, completed }
-      const todo = JSON.parse(Buffer.concat(body).toString());
+      const todo = JSON.parse(Buffer.concat(buffer).toString());
 
       db.update(todo, err => {
         if (err) return errorHandler(err, req, res); // 错误处理
@@ -124,7 +132,7 @@ function handler(req, res) {
 
 // 错误处理
 function errorHandler(err, req, res) {
-  console.error(`Error: ${err.message}`);
+  console.error(`[Error] ${req.method} ${req.url} got ${err.message}`);
   res.statusCode = 500;
   res.statusMessage = err.message;
   res.end();
@@ -132,7 +140,7 @@ function errorHandler(err, req, res) {
 
 // 兜底处理
 function notFoundHandler(req, res) {
-  const msg = `${req.method} ${req.url} not found`;
+  const msg = `[Error] ${req.method} ${req.url} not found`;
   console.warn(msg);
   res.statusCode = 404;
   res.end(msg);

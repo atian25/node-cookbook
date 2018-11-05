@@ -7,10 +7,12 @@ const bodyParser = require('koa-bodyparser');
 const Router = require('koa-router');
 
 // 引入处理逻辑
-const accessLog = require('./middleware/access_log');
-const notFound = require('./middleware/not_found');
-const home = require('./middleware/home');
-const todo = require('./middleware/todo');
+const accessLog = require('./app/middleware/access_log');
+const notFound = require('./app/middleware/not_found');
+const errorHandler = require('./app/middleware/error_handler');
+
+const home = require('./app/controller/home');
+const todo = require('./app/controller/todo');
 
 // 实例化应用
 const app = new Koa();
@@ -25,6 +27,7 @@ app.use(staticCache({
   preload: false,
 }));
 
+app.use(errorHandler); // 错误处理
 app.use(bodyParser()); // Body 解析
 app.use(accessLog); // 打印访问日志
 app.use(notFound); // 兜底处理
@@ -41,7 +44,11 @@ router.delete('/api/todo/:id(\\d+)', todo.remove);
 app.use(router.routes());
 app.use(router.allowedMethods());
 
-// 启动服务
-app.listen(3000, () => {
-  console.log('Server running at http://127.0.0.1:3000/');
-});
+// 直接执行的时候，启动服务
+if (require.main === module) {
+  app.listen(3000, () => {
+    console.log('Server running at http://127.0.0.1:3000/');
+  });
+}
+
+module.exports = app.callback();

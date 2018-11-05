@@ -1,0 +1,8 @@
+{
+  "name": "cycle-example",
+  "version": "1.0.0",
+  "description": "showcase for cycle",
+  "scripts": {
+    "start": "node index.js"
+  }
+}

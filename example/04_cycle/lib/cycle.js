@@ -2,7 +2,6 @@
 
 const http = require('http');
 const URL = require('url');
-
 module.exports = class Cycle {
   constructor() {
     this.middlewares = [];
@@ -104,11 +103,6 @@ module.exports = class Cycle {
       set body(value) {
         this._body = value;
       },
-
-      json(data) {
-        this.set('Content-Type', 'application/json');
-        this.body = data;
-      },
     };
 
     return ctx;
@@ -119,6 +113,7 @@ module.exports = class Cycle {
     // 上下文
     const ctx = this._patch(req, res);
 
+    // 组合中间件
     let i = 0;
     const next = () => {
       const rule = this.middlewares[i++];
@@ -133,8 +128,11 @@ module.exports = class Cycle {
 
     // 执行
     next().then(() => {
+      // 最终写入 Header 和 Body
       if (typeof ctx.body === 'string') {
         res.end(ctx.body);
+      } else if (Buffer.isBuffer(ctx.body)) {
+        res.end(ctx.body.toString());
       } else {
         ctx.set('Content-Type', 'application/json');
         res.end(JSON.stringify(ctx.body));
