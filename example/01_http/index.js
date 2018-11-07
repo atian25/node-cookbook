@@ -7,11 +7,7 @@ const path = require('path');
 const Todo = require('./app/model/todo');
 
 // 简化示例，直接全局变量存储数据。
-const db = new Todo([
-  { id: '1', title: 'Read history of Express', completed: true },
-  { id: '2', title: 'Learn Koa', completed: true },
-  { id: '3', title: 'Star Egg', completed: false },
-]);
+const db = new Todo();
 
 // 业务逻辑处理
 function handler(req, res) {

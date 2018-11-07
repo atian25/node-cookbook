@@ -8,11 +8,7 @@ const app = new Tiny();
 
 // 简化示例，直接全局变量存储数据。
 const Todo = require('./app/model/todo');
-const db = new Todo([
-  { id: '1', title: 'Read history of Express', completed: true },
-  { id: '2', title: 'Learn Koa', completed: true },
-  { id: '3', title: 'Star Egg', completed: false },
-]);
+const db = new Todo();
 
 // 记录访问耗时，并打印日志
 app.use((req, res, next) => {

@@ -2,11 +2,7 @@
 
 // 简化示例，直接全局变量存储数据。
 const Todo = require('../model/todo');
-const db = new Todo([
-  { id: '1', title: 'Read history of Express', completed: true },
-  { id: '2', title: 'Learn Koa', completed: true },
-  { id: '3', title: 'Star Egg', completed: false },
-]);
+const db = new Todo();
 
 // 查询列表，支持过滤 `/api/todo?completed=true`
 exports.list = async ctx => {

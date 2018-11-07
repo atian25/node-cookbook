@@ -3,11 +3,17 @@
   "version": "1.0.0",
   "description": "showcase for express",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "egg-bin test",
+    "cov": "egg-bin cov"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
     "response-time": "^2.3.2"
+  },
+  "devDependencies": {
+    "egg-bin": "^4.9.0",
+    "supertest": "^3.3.0"
   }
 }

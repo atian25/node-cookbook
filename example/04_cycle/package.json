@@ -3,6 +3,12 @@
   "version": "1.0.0",
   "description": "showcase for cycle",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "egg-bin test",
+    "cov": "egg-bin cov"
+  },
+  "devDependencies": {
+    "egg-bin": "^4.9.0",
+    "supertest": "^3.3.0"
   }
 }
