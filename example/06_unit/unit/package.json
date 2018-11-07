@@ -1,5 +1,5 @@
 {
-  "name": "unit-example",
+  "name": "unit",
   "version": "1.0.0",
   "description": "showcase for unit",
   "scripts": {
@@ -14,7 +14,5 @@
     "koa-static-cache": "^5.1.2"
   },
   "devDependencies": {
-    "egg-bin": "^4.9.0",
-    "supertest": "^3.3.0"
   }
 }

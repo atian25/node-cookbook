@@ -1,0 +1,16 @@
+{
+  "name": "unit-example",
+  "version": "1.0.0",
+  "description": "showcase for unit",
+  "scripts": {
+    "start": "node index.js",
+    "test": "egg-bin test",
+    "cov": "egg-bin cov",
+    "postinstall": "../../../node_modules/.bin/npmlink ../unit"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "egg-bin": "^4.9.0",
+    "supertest": "^3.3.0"
+  }
+}

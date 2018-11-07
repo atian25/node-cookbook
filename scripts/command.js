@@ -1,5 +1,6 @@
 'use strict';
 
+const { fs } = require('mz');
 const path = require('path');
 const Command = require('common-bin');
 const globby = require('globby');
@@ -32,18 +33,12 @@ class TestCommand extends Command {
 
     for (const dir of dirs) {
       if (!this.testExists(dir)) {
-        console.info('%s directory %s',
-          chalk.bgYellow('skip'),
-          chalk.gray(dir)
-        );
+        console.info('%s directory %s', chalk.bgYellow('skip'), chalk.gray(dir));
         skip.add(dir);
         continue;
       }
 
-      console.info('%s directory %s',
-        chalk.bgGreen('test'),
-        chalk.gray(dir)
-      );
+      console.info('%s directory %s', chalk.bgGreen('test'), chalk.gray(dir));
       try {
         const flag = argv.c ? ' -c' : '';
         const npmInstallPath = path.join(__dirname, '../node_modules/.bin/npmupdate');
@@ -77,7 +72,14 @@ class TestCommand extends Command {
   async getExamples() {
     const cwd = path.join(__dirname, '../example');
     const files = await globby([ '*' ], { cwd, onlyDirectories: true });
-    return files.map(x => path.join(cwd, x));
+    const result = [];
+    for (const dir of files) {
+      const exampleDir = path.join(cwd, dir);
+      const projectDir = path.join(exampleDir, 'project');
+      const isProjectExists = await fs.exists(projectDir);
+      result.push(isProjectExists ? projectDir : exampleDir);
+    }
+    return result;
   }
 
   async runscript(command, opt = {}) {

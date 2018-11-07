@@ -1,7 +1,7 @@
 {
-  "name": "cycle-example",
+  "name": "http-example",
   "version": "1.0.0",
-  "description": "showcase for cycle",
+  "description": "showcase for http",
   "scripts": {
     "start": "node index.js",
     "test": "egg-bin test",

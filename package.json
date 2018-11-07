@@ -1,11 +1,12 @@
 {
   "name": "node-cookbook",
   "version": "1.0.0",
-  "description": "",
+  "description": "《Node.js 从小工坊走向企业级开发》相关示例源码",
   "author": "TZ <atian25@qq.com>",
   "scripts": {
     "lint": "eslint . --fix",
-    "test": "node scripts/test.js"
+    "test": "node scripts/test.js -c",
+    "clean": "rm -rf example/**/node_modules && rm -rf example/**/**/node_modules"
   },
   "homepage": "https://github.com/atian25/node-cookbook",
   "dependencies": {},

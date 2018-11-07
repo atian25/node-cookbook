@@ -1,6 +1,6 @@
 'use strict';
 
-const Unit = require('./lib/unit');
+const Unit = require('unit');
 
 const app = new Unit({
   baseDir: __dirname,

@@ -1,12 +1,10 @@
-# 重铸轮子 Cycle
+# 牛刀小试 HTTP Server
 
 ## Usage
 
 启动服务：
 
 ```bash
-$ cd project
-$ cnpm i
 $ node index.js
 ```
 

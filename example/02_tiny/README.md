@@ -1,10 +1,12 @@
-# 造个轮子 Micro
+# 造个轮子 Tiny
 
 ## Usage
 
 启动服务：
 
 ```bash
+$ cd project
+$ cnpm i
 $ node index.js
 ```
 

@@ -5,6 +5,8 @@
 启动服务：
 
 ```bash
+$ cd project
+$ cnpm i
 $ node index.js
 ```
 

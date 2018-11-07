@@ -1,7 +1,7 @@
 'use strict';
 
 const path = require('path');
-const Cycle = require('./lib/cycle');
+const Cycle = require('cycle');
 
 // 引入处理逻辑
 const staticCache = require('./app/middleware/static');

@@ -1,0 +1,15 @@
+{
+  "name": "cycle-example",
+  "version": "1.0.0",
+  "description": "showcase for cycle",
+  "scripts": {
+    "start": "node index.js",
+    "test": "egg-bin test",
+    "cov": "egg-bin cov",
+    "postinstall": "../../../node_modules/.bin/npmlink ../cycle"
+  },
+  "devDependencies": {
+    "egg-bin": "^4.9.0",
+    "supertest": "^3.3.0"
+  }
+}

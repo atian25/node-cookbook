@@ -1,11 +1,12 @@
 {
-  "name": "micro-example",
+  "name": "tiny-example",
   "version": "1.0.0",
-  "description": "showcase for mirco",
+  "description": "showcase for tiny",
   "scripts": {
     "start": "node index.js",
     "test": "egg-bin test",
-    "cov": "egg-bin cov"
+    "cov": "egg-bin cov",
+    "postinstall": "../../../node_modules/.bin/npmlink ../tiny"
   },
   "devDependencies": {
     "egg-bin": "^4.9.0",

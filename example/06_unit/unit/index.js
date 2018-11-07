@@ -11,9 +11,10 @@ module.exports = class Unit extends Koa {
 
     // 应用目录
     this.baseDir = opts.baseDir;
+    this.frameworkDir = __dirname;
 
     // 加载单元，默认为：框架 -> 应用
-    this.loadUnits = [ __dirname, this.baseDir ];
+    this.loadUnits = [ this.frameworkDir, this.baseDir ];
 
     // 按照目录规范自动挂载
     this.load();
@@ -93,6 +94,17 @@ module.exports = class Unit extends Koa {
   // 加载应用的 `app/router.js` 文件，映射路由
   loadRouter() {
     this.router = new Router();
+
+    // RESTful API
+    this.router.resources = (prefix, controller) => {
+      const { list, add, update, remove } = controller;
+      if (list) this.router.get(prefix, list);
+      if (add) this.router.post(prefix, add);
+      if (update) this.router.put(prefix, update);
+      if (remove) this.router.delete(`${prefix}/:id(\\d+)`, remove);
+      return this.router;
+    };
+
     // load router file
     const mod = require(path.join(this.baseDir, 'app/router.js'));
     // mount router

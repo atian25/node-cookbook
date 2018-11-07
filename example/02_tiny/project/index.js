@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const Tiny = require('./lib/tiny');
+const Tiny = require('tiny');
 const app = new Tiny();
 
 // 简化示例，直接全局变量存储数据。

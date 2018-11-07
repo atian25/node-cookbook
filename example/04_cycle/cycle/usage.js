@@ -1,6 +1,6 @@
 'use strict';
 
-const Cycle = require('./lib/cycle');
+const Cycle = require('./');
 const app = new Cycle();
 
 // 记录访问日志

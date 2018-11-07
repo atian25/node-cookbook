@@ -1,0 +1,10 @@
+{
+  "name": "cycle",
+  "version": "1.0.0",
+  "description": "framework for cycle",
+  "scripts": {
+    "start": "node index.js",
+    "test": "egg-bin test",
+    "cov": "egg-bin cov"
+  }
+}
