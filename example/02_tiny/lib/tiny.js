@@ -3,7 +3,7 @@
 const http = require('http');
 const URL = require('url');
 
-module.exports = class Micro {
+module.exports = class Tiny {
   constructor() {
     this.middlewares = [];
 

@@ -3,8 +3,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const Micro = require('./lib/micro');
-const app = new Micro();
+const Tiny = require('./lib/tiny');
+const app = new Tiny();
 
 // 简化示例，直接全局变量存储数据。
 const Todo = require('./app/model/todo');

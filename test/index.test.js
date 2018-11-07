@@ -6,7 +6,7 @@ const request = require('supertest');
 
 const fixutres = [
   '01_http',
-  '02_micro',
+  '02_tiny',
   '03_express',
   '04_cycle',
   '05_koa',
