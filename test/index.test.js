@@ -5,11 +5,12 @@ const assert = require('assert');
 const request = require('supertest');
 
 const fixutres = [
-  '01_http',
-  '02_tiny',
-  '03_express',
-  '04_cycle',
-  '05_koa',
+  // '01_http',
+  // '02_tiny',
+  // '03_express',
+  // '04_cycle',
+  // '05_koa',
+  '06_unit',
 ];
 
 for (const target of fixutres) {

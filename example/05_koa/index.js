@@ -6,11 +6,15 @@ const staticCache = require('koa-static-cache');
 const bodyParser = require('koa-bodyparser');
 const Router = require('koa-router');
 
-// 引入处理逻辑
+// 引入 Middleware
 const accessLog = require('./app/middleware/access_log');
 const notFound = require('./app/middleware/not_found');
 const errorHandler = require('./app/middleware/error_handler');
 
+// 引入 Model
+const TodoModel = require('./app/model/todo');
+
+// 引入 Controller
 const home = require('./app/controller/home');
 const todo = require('./app/controller/todo');
 
@@ -22,7 +26,7 @@ const app = new Koa();
 // 静态资源
 app.use(staticCache({
   prefix: '/public',
-  dir: path.join(__dirname, 'public'),
+  dir: path.join(__dirname, 'app/public'),
   dynamic: true,
   preload: false,
 }));
@@ -31,6 +35,11 @@ app.use(errorHandler()); // 错误处理
 app.use(bodyParser()); // Body 解析
 app.use(accessLog()); // 打印访问日志
 app.use(notFound()); // 兜底处理
+
+// 把 Model 挂载到 Context
+app.context.model = {
+  Todo: new TodoModel(),
+};
 
 // 路由映射
 const router = new Router();

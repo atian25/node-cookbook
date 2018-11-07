@@ -4,17 +4,23 @@
   "description": "",
   "author": "TZ <atian25@qq.com>",
   "scripts": {
-    "lint": "eslint . --fix"
+    "lint": "eslint . --fix",
+    "test": "egg-bin test"
   },
   "homepage": "https://github.com/atian25/node-cookbook",
+  "dependencies": {
+  },
   "devDependencies": {
+    "egg-bin": "^4.9.0",
     "eslint": "^5.7.0",
     "eslint-config-egg": "^7.1.0"
   },
   "eslintConfig": {
     "extends": "egg"
   },
-  "eslintIgnore": [ "**/node_modules/" ],
+  "eslintIgnore": [
+    "**/node_modules/"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/atian25/node-cookbook.git"
