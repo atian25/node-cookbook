@@ -27,10 +27,10 @@ app.use(staticCache({
   preload: false,
 }));
 
-app.use(errorHandler); // 错误处理
+app.use(errorHandler()); // 错误处理
 app.use(bodyParser()); // Body 解析
-app.use(accessLog); // 打印访问日志
-app.use(notFound); // 兜底处理
+app.use(accessLog()); // 打印访问日志
+app.use(notFound()); // 兜底处理
 
 // 路由映射
 const router = new Router();

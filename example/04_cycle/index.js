@@ -23,10 +23,10 @@ app.use(staticCache({
   prefix: '/public',
   dir: path.join(__dirname, 'app/public'),
 }));
-app.use(errorHandler); // 错误处理
-app.use(notFound); // 兜底处理
+app.use(errorHandler()); // 错误处理
+app.use(notFound()); // 兜底处理
 app.use(bodyParser()); // Body 解析
-app.use(accessLog); // 打印访问日志
+app.use(accessLog()); // 打印访问日志
 
 // 路由映射
 app.get('/', home);
