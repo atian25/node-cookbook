@@ -38,7 +38,7 @@ app.use(notFound()); // 兜底处理
 
 // 把 Model 挂载到 Context
 app.context.model = {
-  Todo: new TodoModel(),
+  todo: new TodoModel(),
 };
 
 // 路由映射

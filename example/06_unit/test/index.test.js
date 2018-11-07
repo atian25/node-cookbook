@@ -3,7 +3,7 @@
 const assert = require('assert');
 const request = require('supertest');
 
-describe('=== Koa ===', () => {
+describe('=== Unit ===', () => {
   let app;
 
   before(() => {

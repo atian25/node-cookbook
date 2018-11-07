@@ -11,8 +11,7 @@
     "koa": "^2.6.1",
     "koa-bodyparser": "^4.2.1",
     "koa-router": "^7.4.0",
-    "koa-static-cache": "^5.1.2",
-    "mz-modules": "^2.1.0"
+    "koa-static-cache": "^5.1.2"
   },
   "devDependencies": {
     "egg-bin": "^4.9.0",

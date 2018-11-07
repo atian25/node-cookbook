@@ -1,8 +1,12 @@
 'use strict';
 
 module.exports = class Todo {
-  constructor(arr) {
-    this.store = arr || [];
+  constructor() {
+    this.store = [
+      { id: '1', title: 'Read history of Express', completed: true },
+      { id: '2', title: 'Learn Koa', completed: true },
+      { id: '3', title: 'Star Egg', completed: false },
+    ];
   }
 
   // 查询任务列表，支持可选过滤参数 { completed }
