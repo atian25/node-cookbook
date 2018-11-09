@@ -30,14 +30,14 @@ module.exports = class Super extends Koa {
 
   // 加载框架和应用的 `config/config.js` 配置文件，并合并，挂载到 `app.config` 上。
   loadConfig() {
-    this.cfg = {};
+    this.config = {};
 
-    // load config
+    // 加载所有 loadUnits 的文件
     for (const unit of this.loadUnits) {
       const mod = require(path.join(unit, 'config/config.js'));
-      const cfg = mod({ baseDir: this.baseDir });
-      // merge
-      Object.assign(this.cfg, cfg);
+      const config = mod({ baseDir: this.baseDir });
+      // 合并配置
+      Object.assign(this.config, config);
     }
   }
 
@@ -56,9 +56,6 @@ module.exports = class Super extends Koa {
   }
 
   // 加载中间件
-  //   - 加载框架和应用 `app/middleware` 目录里面的所有中间件
-  //   - 以文件名为 key，传递对应的配置文件值，作为初始化的参数
-  //   - 最后读取 `coreMiddleware` 和 `appMiddleware` 配置，按顺序挂载中间件
   loadMiddleware() {
     const cfg = this.config;
     const middlewareMap = {};
@@ -113,9 +110,7 @@ module.exports = class Super extends Koa {
     const mod = require(path.join(this.baseDir, 'app/router.js'));
     mod(this);
 
-    // 在 nextTick 才挂载到中间件，以确保是最后一个
-    process.nextTick(() => {
-      this.use(this.router.routes());
-    });
+    // 确保是最后一个中间件
+    this.use(this.router.routes());
   }
 };

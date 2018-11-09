@@ -49,7 +49,7 @@ module.exports = class Todo {
   }
 
   // 删除任务，找不到对象会抛错
-  destroy(id) {
+  async destroy(id) {
     const index = id ? this.store.findIndex(x => x.id === id) : -1;
     if (index === -1) throw new Error(`task#${id} not found`);
 

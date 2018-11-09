@@ -3,7 +3,7 @@
 module.exports = () => {
   const config = {};
 
-  config.appMiddleware = [];
+  config.middleware = [ 'test' ];
 
   return config;
 };

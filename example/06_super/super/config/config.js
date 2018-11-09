@@ -15,6 +15,8 @@ module.exports = appInfo => {
     'not_found',
   ];
 
+  config.middleware = [];
+
   config.static = {
     prefix: '/public',
     dir: path.join(baseDir, 'app/public'),
