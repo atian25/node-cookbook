@@ -4,11 +4,13 @@
   "description": "showcase for http",
   "scripts": {
     "start": "node index.js",
+    "debug": "nodemon --inspect .",
     "test": "egg-bin test",
     "cov": "egg-bin cov"
   },
   "devDependencies": {
     "egg-bin": "^4.9.0",
+    "nodemon": "^1.18.6",
     "supertest": "^3.3.0"
   }
 }

@@ -36,7 +36,7 @@ new Vue({
 
     completeTodo: function(todo) {
       todo.completed = !todo.completed;
-      axios.put('/api/todo', todo)
+      axios.put(`/api/todo/${todo.id}`, todo)
         .then(() => {
           this.newTodo = '';
         });

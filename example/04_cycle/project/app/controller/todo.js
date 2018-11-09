@@ -11,7 +11,7 @@ exports.list = async ctx => {
   if (ctx.query.completed !== undefined) completed = completed === 'true';
 
   ctx.status = 200;
-  ctx.body = await db.find({ completed });
+  ctx.body = await db.list({ completed });
 };
 
 // 创建任务
@@ -23,15 +23,20 @@ exports.add = async ctx => {
 
 // 修改任务
 exports.update = async ctx => {
+  // URL 匹配参数
+  const id = ctx.params[0];
+
   // `ctx.requestBody` 为 body-parser 中间件的产物
+  const data = ctx.requestBody;
+
   ctx.status = 204;
-  ctx.body = await db.update(ctx.requestBody);
+  ctx.body = await db.update(id, data);
 };
 
 // 删除操作
-exports.remove = async ctx => {
+exports.destroy = async ctx => {
   // URL 匹配参数
   const id = ctx.params[0];
   ctx.status = 204;
-  await db.remove(id);
+  await db.destroy(id);
 };

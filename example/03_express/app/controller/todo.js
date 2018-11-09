@@ -10,7 +10,7 @@ exports.list = function(req, res, next) {
   let { completed } = req.query;
   if (req.query.completed !== undefined) completed = completed === 'true';
 
-  db.find({ completed }, (err, data) => {
+  db.list({ completed }, (err, data) => {
     if (err) return next(err); // 错误处理
     // 发送响应
     res.status(200);
@@ -31,7 +31,9 @@ exports.add = function(req, res, next) {
 
 // 修改任务
 exports.update = function(req, res, next) {
-  db.update(req.body, err => {
+  // URL 匹配参数
+  const { id } = req.params;
+  db.update(id, req.body, err => {
     if (err) return next(err); // 错误处理
     // 发送响应，无需返回对象
     res.status(204);
@@ -41,10 +43,10 @@ exports.update = function(req, res, next) {
 };
 
 // 删除任务
-exports.remove = function(req, res, next) {
+exports.destroy = function(req, res, next) {
   // URL 匹配参数
   const { id } = req.params;
-  db.remove(id, err => {
+  db.destroy(id, err => {
     if (err) return next(err); // 错误处理
     // 发送响应，无需返回对象
     res.status(204);

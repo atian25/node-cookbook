@@ -10,7 +10,7 @@ module.exports = class Todo {
   }
 
   // 查询任务列表，支持可选过滤参数 { completed }
-  async find(filters) {
+  async list(filters) {
     const { completed } = filters;
     let list = this.store;
     if (completed !== undefined) {
@@ -39,17 +39,17 @@ module.exports = class Todo {
   }
 
   // 修改任务，找不到对象会抛错
-  async update(todo) {
+  async update(id, data) {
     // 检查是否存在
-    const data = await this.get(todo.id);
-    if (!todo.title) throw new Error('task title required');
+    const todo = await this.get(id);
+    if (!data.title) throw new Error('task title required');
 
     // 修改 todo 对象，并更新状态
-    return Object.assign(data, todo);
+    return Object.assign(todo, data);
   }
 
   // 删除任务，找不到对象会抛错
-  remove(id) {
+  destroy(id) {
     const index = id ? this.store.findIndex(x => x.id === id) : -1;
     if (index === -1) throw new Error(`task#${id} not found`);
 

@@ -63,7 +63,7 @@ describe('=== Http ===', () => {
 
   it('should update todo', async () => {
     await request(app)
-      .put('/api/todo')
+      .put('/api/todo/1')
       .send({ id: '1', title: 'Modify Express' })
       .expect('X-Response-Time', /\d+ms/)
       .expect(204);
@@ -79,8 +79,8 @@ describe('=== Http ===', () => {
 
   it('should update todo fail', () => {
     return request(app)
-      .put('/api/todo')
-      .send({ id: '-1', title: 'Modify Express' })
+      .put('/api/todo/999')
+      .send({ id: '999', title: 'Modify Express' })
       .expect(500);
   });
 

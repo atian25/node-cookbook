@@ -1,0 +1,17 @@
+{
+  "name": "koa-example",
+  "version": "1.0.0",
+  "description": "showcase for koa",
+  "scripts": {
+    "start": "node index.js",
+    "debug": "nodemon --inspect .",
+    "test": "egg-bin test",
+    "cov": "egg-bin cov",
+    "postinstall": "../../../node_modules/.bin/npmlink ../super"
+  },
+  "devDependencies": {
+    "egg-bin": "^4.9.0",
+    "nodemon": "^1.18.6",
+    "supertest": "^3.3.0"
+  }
+}

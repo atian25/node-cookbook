@@ -41,7 +41,7 @@ app.get('/api/todo', (req, res) => {
   let { completed } = req.query;
   if (req.query.completed !== undefined) completed = completed === 'true';
 
-  db.find({ completed }, (err, data) => {
+  db.list({ completed }, (err, data) => {
     if (err) return errorHandler(err, req, res); // 错误处理
     // 发送响应
     res.status(200);
@@ -78,8 +78,11 @@ app.post('/api/todo', (req, res) => {
 });
 
 // 修改任务
-app.put('/api/todo', (req, res) => {
-  db.update(req.body, err => {
+app.put(/^\/api\/todo\/(\d+)$/, (req, res) => {
+  // 框架从 URL 中用正则式匹配出 ID，存到了 `req.params` 中
+  const id = req.params[0];
+
+  db.update(id, req.body, err => {
     if (err) return errorHandler(err, req, res); // 错误处理
     // 发送响应，无需返回对象
     res.status(204);
@@ -90,10 +93,7 @@ app.put('/api/todo', (req, res) => {
 
 // 删除任务
 app.delete(/^\/api\/todo\/(\d+)$/, (req, res) => {
-  // 框架从 URL 中用正则式匹配出 ID，存到了 `req.params` 中
-  const id = req.params[0];
-
-  db.remove(id, err => {
+  db.destroy(req.params[0], err => {
     if (err) return errorHandler(err, req, res); // 错误处理
     // 发送响应，无需返回对象
     res.status(204);

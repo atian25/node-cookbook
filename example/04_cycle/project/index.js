@@ -32,8 +32,8 @@ app.use(accessLog()); // 打印访问日志
 app.get('/', home);
 app.get('/api/todo', todo.list);
 app.post('/api/todo', todo.add);
-app.put('/api/todo', todo.update);
-app.delete(/^\/api\/todo\/(\d+)$/, todo.remove);
+app.put(/^\/api\/todo\/(\d+)$/, todo.update);
+app.delete(/^\/api\/todo\/(\d+)$/, todo.destroy);
 
 // 直接执行的时候，启动服务
 if (require.main === module) {

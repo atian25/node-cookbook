@@ -45,7 +45,7 @@ function handler(req, res) {
     let { completed } = query;
     if (query.completed !== undefined) completed = completed === 'true';
 
-    db.find({ completed }, (err, data) => {
+    db.list({ completed }, (err, data) => {
       if (err) return errorHandler(err, req, res); // 错误处理
       // 发送响应
       res.statusCode = 200;
@@ -81,19 +81,21 @@ function handler(req, res) {
     return; // 别忘了跳过后续路由
   }
 
-  // PUT 请求，修改任务
-  if (method === 'PUT' && pathname === '/api/todo') {
-    const buffer = [];
+  // PUT 请求，修改任务 `/api/todo/12345`
+  if (method === 'PUT' && pathname.startsWith('/api/todo/')) {
+    // 从 URL 中用正则式匹配出 ID
+    const match = pathname.match(/^\/api\/todo\/(\d+)$/);
+    const id = match && match[1];
 
+    const buffer = [];
     req.on('data', chunk => {
       buffer.push(chunk);
     });
-
     req.on('end', () => {
       // 解析 Body， { id, title, completed }
-      const todo = JSON.parse(Buffer.concat(buffer).toString());
+      const body = JSON.parse(Buffer.concat(buffer).toString());
 
-      db.update(todo, err => {
+      db.update(id, body, err => {
         if (err) return errorHandler(err, req, res); // 错误处理
         // 发送响应，无需返回对象
         res.statusCode = 204;
@@ -105,13 +107,12 @@ function handler(req, res) {
     return; // 别忘了跳过后续路由
   }
 
-  // DELETE 请求，删除任务，`/api/todo/123456`
+  // DELETE 请求，删除任务，`/api/todo/12345`
   if (method === 'DELETE' && pathname.startsWith('/api/todo/')) {
-    // 从 URL 中用正则式匹配出 ID
     const match = pathname.match(/^\/api\/todo\/(\d+)$/);
     const id = match && match[1];
 
-    db.remove(id, err => {
+    db.destroy(id, err => {
       if (err) return errorHandler(err, req, res); // 错误处理
       // 发送响应，无需返回对象
       res.statusCode = 204;

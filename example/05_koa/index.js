@@ -4,7 +4,6 @@ const path = require('path');
 const Koa = require('koa');
 const staticCache = require('koa-static-cache');
 const bodyParser = require('koa-bodyparser');
-const Router = require('koa-router');
 
 // 引入 Middleware
 const accessLog = require('./app/middleware/access_log');
@@ -14,9 +13,8 @@ const errorHandler = require('./app/middleware/error_handler');
 // 引入 Model
 const TodoModel = require('./app/model/todo');
 
-// 引入 Controller
-const home = require('./app/controller/home');
-const todo = require('./app/controller/todo');
+// 引入 路由
+const Router = require('./app/router');
 
 // 实例化应用
 const app = new Koa();
@@ -41,17 +39,8 @@ app.context.model = {
   todo: new TodoModel(),
 };
 
-// 路由映射
-const router = new Router();
-router.get('/', home);
-router.get('/api/todo', todo.list);
-router.post('/api/todo', todo.add);
-router.put('/api/todo', todo.update);
-router.delete('/api/todo/:id(\\d+)', todo.remove);
-
-// 挂载路由
-app.use(router.routes());
-app.use(router.allowedMethods());
+// 挂载路由，路由本质上也只是一个中间件，故应该放在最后面挂载。
+Router(app);
 
 // 直接执行的时候，启动服务
 if (require.main === module) {

@@ -25,7 +25,7 @@ class TestCommand extends Command {
   }
 
   async run({ argv }) {
-    const dirs = await this.getExamples();
+    const dirs = await this.getExamples(argv._[0]);
 
     const skip = new Set();
     const success = new Set();
@@ -69,9 +69,9 @@ class TestCommand extends Command {
     }
   }
 
-  async getExamples() {
+  async getExamples(pattern = '*') {
     const cwd = path.join(__dirname, '../example');
-    const files = await globby([ '*' ], { cwd, onlyDirectories: true });
+    const files = await globby(pattern, { cwd, onlyDirectories: true });
     const result = [];
     for (const dir of files) {
       const exampleDir = path.join(cwd, dir);

@@ -31,8 +31,8 @@ app.use(responseTime(function(req, res, time) {
 app.get('/', home);
 app.get('/api/todo', todo.list);
 app.post('/api/todo', todo.add);
-app.put('/api/todo', todo.update);
-app.delete('/api/todo/:id(\\d+)', todo.remove);
+app.put('/api/todo/:id', todo.update);
+app.delete('/api/todo/:id', todo.destroy);
 
 // 挂载后置中间件
 app.use(notFound);
