@@ -17,9 +17,15 @@ class TestCommand extends Command {
         description: 'Show more infomation',
         alias: 'V',
       },
+
       c: {
         type: 'boolean',
         description: 'in China',
+      },
+
+      'skip-install': {
+        type: 'boolean',
+        description: 'skip npm install',
       },
     };
   }
@@ -40,9 +46,14 @@ class TestCommand extends Command {
 
       console.info('%s directory %s', chalk.bgGreen('test'), chalk.gray(dir));
       try {
-        const flag = argv.c ? ' -c' : '';
-        const npmInstallPath = path.join(__dirname, '../node_modules/.bin/npmupdate');
-        await this.runscript(`${npmInstallPath}${flag}`, { cwd: dir });
+        // npm install
+        if (!argv.skipInstall) {
+          const flag = argv.c ? ' -c' : '';
+          const npmInstallPath = path.join(__dirname, '../node_modules/.bin/npmupdate');
+          await this.runscript(`${npmInstallPath}${flag}`, { cwd: dir });
+        }
+
+        // run test
         await this.runscript('npm test', { cwd: dir });
         console.info('%s success\n', chalk.green('✔'));
         success.add(dir);
