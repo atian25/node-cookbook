@@ -69,7 +69,7 @@ function handler(req, res) {
       // 解析 Body， { id, title, completed }
       const todo = JSON.parse(Buffer.concat(buffer).toString());
 
-      db.add(todo, (err, data) => {
+      db.create(todo, (err, data) => {
         if (err) return errorHandler(err, req, res); // 错误处理
         // 发送响应
         res.statusCode = 201;

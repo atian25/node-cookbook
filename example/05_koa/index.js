@@ -37,8 +37,8 @@ app.use(notFound()); // 兜底处理
 const router = app.router = new Router();
 
 router.get('/', home);
-router.get('/api/todo', todo.list);
-router.post('/api/todo', todo.add);
+router.get('/api/todo', todo.index);
+router.post('/api/todo', todo.create);
 router.put('/api/todo/:id', todo.update);
 router.delete('/api/todo/:id', todo.destroy);
 

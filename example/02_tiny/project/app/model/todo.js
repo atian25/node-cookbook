@@ -29,7 +29,7 @@ module.exports = class Todo {
   }
 
   // 添加任务，会校验 title 属性
-  add(todo, callback) {
+  create(todo, callback) {
     // 校验数据
     if (!todo.title) return callback(new Error('task title required'));
 

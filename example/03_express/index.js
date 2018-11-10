@@ -29,8 +29,8 @@ app.use(responseTime(function(req, res, time) {
 
 // 路由映射
 app.get('/', home);
-app.get('/api/todo', todo.list);
-app.post('/api/todo', todo.add);
+app.get('/api/todo', todo.index);
+app.post('/api/todo', todo.create);
 app.put('/api/todo/:id', todo.update);
 app.delete('/api/todo/:id', todo.destroy);
 

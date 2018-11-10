@@ -30,7 +30,7 @@ module.exports = class Todo {
   }
 
   // 添加任务，会校验 title 属性
-  async add(todo) {
+  async create(todo) {
     // 校验数据
     if (!todo.title) throw new Error('task title required');
 

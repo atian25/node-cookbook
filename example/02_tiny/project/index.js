@@ -69,7 +69,7 @@ app.use((req, res, next) => {
 // 创建任务
 app.post('/api/todo', (req, res) => {
   // `req.body` 为上一个中间件的产物
-  db.add(req.body, (err, data) => {
+  db.create(req.body, (err, data) => {
     if (err) return errorHandler(err, req, res); // 错误处理
     // 发送响应
     res.status(201);

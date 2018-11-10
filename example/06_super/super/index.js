@@ -109,9 +109,9 @@ module.exports = class Super extends Koa {
 
     // 提供 RESTful API 语法糖
     this.router.resources = (prefix, controller) => {
-      const { list, add, update, destroy } = controller;
-      if (list) this.router.get(prefix, list);
-      if (add) this.router.post(prefix, add);
+      const { index, create, update, destroy } = controller;
+      if (index) this.router.get(prefix, index);
+      if (create) this.router.post(prefix, create);
       if (update) this.router.put(`${prefix}/:id(\\d+)`, update);
       if (destroy) this.router.delete(`${prefix}/:id(\\d+)`, destroy);
       return this.router;

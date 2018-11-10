@@ -5,7 +5,7 @@ const Todo = require('../model/todo');
 const db = new Todo();
 
 // 查询列表，支持过滤 `/api/todo?completed=true`
-exports.list = function(req, res, next) {
+exports.index = function(req, res, next) {
   // query 参数均为字符串，需转换
   let { completed } = req.query;
   if (req.query.completed !== undefined) completed = completed === 'true';
@@ -19,9 +19,9 @@ exports.list = function(req, res, next) {
 };
 
 // 创建任务
-exports.add = function(req, res, next) {
+exports.create = function(req, res, next) {
   // `req.body` 为上一个中间件的产物
-  db.add(req.body, (err, data) => {
+  db.create(req.body, (err, data) => {
     if (err) return next(err); // 错误处理
     // 发送响应
     res.status(201);

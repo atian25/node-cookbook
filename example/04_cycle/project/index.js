@@ -30,8 +30,8 @@ app.use(accessLog()); // 打印访问日志
 
 // 路由映射
 app.get('/', home);
-app.get('/api/todo', todo.list);
-app.post('/api/todo', todo.add);
+app.get('/api/todo', todo.index);
+app.post('/api/todo', todo.create);
 app.put(/^\/api\/todo\/(\d+)$/, todo.update);
 app.delete(/^\/api\/todo\/(\d+)$/, todo.destroy);
 
