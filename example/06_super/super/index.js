@@ -51,7 +51,18 @@ module.exports = class Super extends Koa {
     for (const file of files) {
       const baseName = path.basename(file, '.js');
       const Model = require(path.join(dir, file));
-      this.context.model[baseName] = new Model();
+
+      // 每次请求都会初始化一个
+      const INSTANCE = Symbol(`context#cache_${baseName}`);
+      Object.defineProperty(this.context.model, baseName, {
+        get() {
+          // 当前请求内，调用多次都仅初始化一次。
+          if (!this[INSTANCE]) {
+            this[INSTANCE] = new Model(this);
+          }
+          return this[INSTANCE];
+        },
+      });
     }
   }
 
