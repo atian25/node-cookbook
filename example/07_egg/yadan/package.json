@@ -1,0 +1,15 @@
+{
+  "name": "yadan",
+  "version": "1.0.0",
+  "description": "showcase for yadan",
+  "scripts": {
+    "start": "node index.js",
+    "test": "egg-bin test",
+    "cov": "egg-bin cov"
+  },
+  "dependencies": {
+    "egg": "^2.13.0",
+    "egg-validate": "^2.0.2",
+    "egg-view-nunjucks": "^2.2.0"
+  }
+}

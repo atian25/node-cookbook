@@ -1,0 +1,19 @@
+{
+  "name": "egg-example",
+  "version": "1.0.0",
+  "description": "showcase for egg",
+  "egg": {
+    "framework": "yadan"
+  },
+  "scripts": {
+    "start": "egg-bin dev",
+    "debug": "egg-bin debug",
+    "test": "egg-bin test",
+    "cov": "egg-bin cov",
+    "postinstall": "../../../node_modules/.bin/npmlink ../yadan"
+  },
+  "devDependencies": {
+    "egg-bin": "^4.9.0",
+    "egg-mock": "^3.20.1"
+  }
+}
