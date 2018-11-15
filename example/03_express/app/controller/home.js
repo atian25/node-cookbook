@@ -10,7 +10,7 @@ module.exports = function(req, res, next) {
   const filePath = path.join(__dirname, '../view/index.html');
   fs.readFile(filePath, (err, content) => {
     if (err) return next(err);
-    res.end(content.toString());
+    res.end(content);
   });
 };
 

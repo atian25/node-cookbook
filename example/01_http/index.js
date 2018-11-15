@@ -24,6 +24,23 @@ function handler(req, res) {
     return originFn.call(res, ...args);
   };
 
+  // 错误处理
+  function errorHandler(status, err) {
+    console.error(`[Error] ${method} ${url}`, err);
+
+    res.statusCode = status;
+    res.statusMessage = err.message;
+
+    // API 请求错误则返回 JSON
+    if (url.startsWith('/api/')) {
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ message: err.message }));
+    } else {
+      res.setHeader('Content-Type', 'text/html');
+      res.end(err.message);
+    }
+  }
+
   // 根据 URL 返回不同的内容
   if (pathname === '/') {
     res.statusCode = 200;
@@ -32,8 +49,8 @@ function handler(req, res) {
     // 注意：此处为简化示例，一般需要缓存
     const filePath = path.join(__dirname, 'app/view/index.html');
     fs.readFile(filePath, (err, content) => {
-      if (err) return errorHandler(err, req, res);
-      res.end(content.toString());
+      if (err) return errorHandler(500, err);
+      res.end(content);
     });
 
     return; // 别忘了跳过后续路由
@@ -46,7 +63,7 @@ function handler(req, res) {
     if (query.completed !== undefined) completed = completed === 'true';
 
     db.list({ completed }, (err, data) => {
-      if (err) return errorHandler(err, req, res); // 错误处理
+      if (err) return errorHandler(500, err); // 错误处理
       // 发送响应
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
@@ -69,8 +86,11 @@ function handler(req, res) {
       // 解析 Body， { id, title, completed }
       const todo = JSON.parse(Buffer.concat(buffer).toString());
 
+      // 数据校验
+      if (!todo.title) return errorHandler(422, new Error('task title required'));
+
       db.create(todo, (err, data) => {
-        if (err) return errorHandler(err, req, res); // 错误处理
+        if (err) return errorHandler(500, err); // 错误处理
         // 发送响应
         res.statusCode = 201;
         res.setHeader('Content-Type', 'application/json');
@@ -95,8 +115,11 @@ function handler(req, res) {
       // 解析 Body， { id, title, completed }
       const body = JSON.parse(Buffer.concat(buffer).toString());
 
+      // 数据校验
+      if (!body.title) return errorHandler(422, new Error('task title required'));
+
       db.update(id, body, err => {
-        if (err) return errorHandler(err, req, res); // 错误处理
+        if (err) return errorHandler(500, err); // 错误处理
         // 发送响应，无需返回对象
         res.statusCode = 204;
         res.setHeader('Content-Type', 'application/json');
@@ -113,7 +136,7 @@ function handler(req, res) {
     const id = match && match[1];
 
     db.destroy(id, err => {
-      if (err) return errorHandler(err, req, res); // 错误处理
+      if (err) return errorHandler(500, err); // 错误处理
       // 发送响应，无需返回对象
       res.statusCode = 204;
       res.setHeader('Content-Type', 'application/json');
@@ -123,24 +146,8 @@ function handler(req, res) {
     return; // 别忘了跳过后续路由
   }
 
-  // 兜底处理
-  notFoundHandler(req, res);
-}
-
-// 错误处理
-function errorHandler(err, req, res) {
-  console.error(`[Error] ${req.method} ${req.url} got ${err.message}`);
-  res.statusCode = 500;
-  res.statusMessage = err.message;
-  res.end();
-}
-
-// 兜底处理
-function notFoundHandler(req, res) {
-  const msg = `[Error] ${req.method} ${req.url} not found`;
-  console.warn(msg);
-  res.statusCode = 404;
-  res.end(msg);
+  // 兜底处理未匹配的 URL
+  errorHandler(404, new Error('Not Found'));
 }
 
 // 直接执行的时候，启动服务

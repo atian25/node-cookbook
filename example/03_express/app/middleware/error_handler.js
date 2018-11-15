@@ -1,10 +1,23 @@
 'use strict';
 
-/* eslint no-unused-vars: 0 */
-// 必须是 4 个参数
-module.exports = function(err, req, res, next) {
-  console.error(`[Error] ${req.method} ${req.url} got ${err.message}`);
-  res.status(500);
-  res.statusMessage = err.message;
-  res.end();
+// 异常处理类型中间件
+module.exports = () => {
+  // 最前面多一个 err 入参，必须 4 个。
+  return (err, req, res, next) => {
+    if (res.headersSent) return next(err);
+
+    console.error(`[Error] ${req.method} ${req.url}`, err);
+
+    res.status(err.status || 500);
+    res.statusMessage = err.message;
+
+    // API 请求错误则返回 JSON
+    if (req.url.startsWith('/api/')) {
+      res.json({ message: err.message });
+    } else {
+      res.type('html');
+      res.end(err.message);
+    }
+  };
 };
+

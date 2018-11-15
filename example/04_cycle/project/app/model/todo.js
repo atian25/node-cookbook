@@ -1,12 +1,12 @@
 'use strict';
 
 const dataStore = [
-  { id: '1', title: 'Read history of Express', completed: true },
+  { id: '1', title: 'Read history of Node.js', completed: true },
   { id: '2', title: 'Learn Koa', completed: true },
   { id: '3', title: 'Star Egg', completed: false },
 ];
 
-module.exports = class Todo {
+module.exports = class TodoStore {
   constructor() {
     this.store = dataStore;
   }

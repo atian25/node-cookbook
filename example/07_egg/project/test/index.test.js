@@ -21,7 +21,7 @@ describe('=== Yadan ===', () => {
       .expect('X-Response-Time', /\d+ms/)
       .expect(200)
       .then(res => {
-        assert(res.body[0].title.includes('Express'));
+        assert(res.body[0].title.includes('Node.js'));
       });
   });
 
@@ -42,7 +42,7 @@ describe('=== Yadan ===', () => {
       .post('/api/todo')
       .send({ title: 'Add one' })
       .expect('Content-Type', /json/)
-      // .expect('X-Response-Time', /\d+ms/)
+      .expect('X-Response-Time', /\d+ms/)
       .expect(201)
       .then(res => {
         assert(res.body.id);
@@ -54,14 +54,24 @@ describe('=== Yadan ===', () => {
   it('should add todo fail', () => {
     return app.httpRequest()
       .post('/api/todo')
+      .set('Accept', 'application/json')
       .send({ title: undefined })
-      .expect(500);
+      .expect(422)
+      .expect({
+        code: 'invalid_param',
+        errors: [{
+          code: 'missing_field',
+          field: 'title',
+          message: 'required',
+        }],
+        message: 'Validation Failed',
+      });
   });
 
   it('should update todo', async () => {
     await app.httpRequest()
       .put('/api/todo/1')
-      .send({ id: '1', title: 'Modify Express' })
+      .send({ id: '1', title: 'Modify Node.js' })
       .expect('X-Response-Time', /\d+ms/)
       .expect(204);
 
@@ -70,15 +80,36 @@ describe('=== Yadan ===', () => {
       .get('/api/todo')
       .expect(200)
       .then(res => {
-        assert(res.body[0].title === 'Modify Express');
+        assert(res.body[0].title === 'Modify Node.js');
       });
   });
 
   it('should update todo fail', () => {
     return app.httpRequest()
       .put('/api/todo/999')
-      .send({ id: '999', title: 'Modify Express' })
-      .expect(500);
+      .set('Accept', 'application/json')
+      .send({ id: '1', title: undefined })
+      .expect(422)
+      .expect({
+        code: 'invalid_param',
+        errors: [{
+          code: 'missing_field',
+          field: 'title',
+          message: 'required',
+        }],
+        message: 'Validation Failed',
+      });
+  });
+
+  it('should update todo fail with not found', () => {
+    return app.httpRequest()
+      .put('/api/todo/999')
+      .set('Accept', 'application/json')
+      .send({ id: '999', title: 'Modify Node.js' })
+      .expect(500)
+      .then(res => {
+        assert(res.body.message === 'task#999 not found');
+      });
   });
 
   it('should delete todo', async () => {
@@ -99,14 +130,36 @@ describe('=== Yadan ===', () => {
   it('should delete todo fail', () => {
     return app.httpRequest()
       .delete('/api/todo/999')
-      .expect(500);
+      .set('Accept', 'application/json')
+      .expect(500)
+      .then(res => {
+        assert(res.body.message === 'task#999 not found');
+      });
   });
 
   it('should 404', () => {
-    return app.httpRequest().get('/no_exist').expect(404);
+    return app.httpRequest()
+      .get('/no_exist')
+      .expect(404);
   });
 
   it('should serve static', () => {
-    return app.httpRequest().get('/public/main.js').expect(200);
+    return app.httpRequest()
+      .get('/public/main.js')
+      .expect(200);
+  });
+
+  it('should support cors', async () => {
+    await app.httpRequest()
+      .get('/api/todo')
+      .set('Origin', 'eggjs.org')
+      .expect('Access-Control-Allow-Origin', '*');
+
+    await app.httpRequest()
+      .get('/')
+      .set('Origin', 'eggjs.org')
+      .then(res => {
+        assert(!res.headers['Access-Control-Allow-Origin']);
+      });
   });
 });

@@ -6,7 +6,7 @@ exports.nunjucks = {
   package: 'egg-view-nunjucks',
 };
 
-// exports.validate = {
-//   enable: true,
-//   package: 'egg-validate',
-// };
+exports.validate = {
+  enable: true,
+  package: 'egg-validate',
+};

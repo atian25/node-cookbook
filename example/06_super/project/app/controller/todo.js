@@ -13,16 +13,25 @@ exports.index = async ctx => {
 // 创建任务
 exports.create = async ctx => {
   // `ctx.request.body` 为 body-parser 中间件的产物
+  const data = ctx.request.body;
+
+  // 数据校验
+  if (!data.title) ctx.throw(422, 'task title required');
+
   ctx.status = 201;
-  ctx.body = await ctx.model.todo.create(ctx.request.body);
+  ctx.body = await ctx.model.todo.create(data);
 };
 
 // 修改任务
 exports.update = async ctx => {
   // `ctx.request.body` 为 body-parser 中间件的产物
+  const data = ctx.request.body;
+
+  // 数据校验
+  if (!data.title) ctx.throw(422, 'task title required');
+
   ctx.status = 204;
-  ctx.type = 'json';
-  ctx.body = await ctx.model.todo.update(ctx.params.id, ctx.request.body);
+  ctx.body = await ctx.model.todo.update(ctx.params.id, data);
 };
 
 // 删除操作
@@ -30,6 +39,5 @@ exports.destroy = async ctx => {
   // URL 匹配参数
   const id = ctx.params.id;
   ctx.status = 204;
-  ctx.type = 'json';
   await ctx.model.todo.destroy(id);
 };

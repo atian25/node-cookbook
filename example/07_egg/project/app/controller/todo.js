@@ -18,13 +18,21 @@ class TodoController extends Controller {
   // 创建任务
   async create() {
     const { ctx } = this;
+
+    // 数据校验
+    ctx.validate({ title: { type: 'string' } });
+
     ctx.status = 201;
-    ctx.body = await ctx.model.todo.add(ctx.request.body);
+    ctx.body = await ctx.model.todo.create(ctx.request.body);
   }
 
   // 修改任务
   async update() {
     const { ctx } = this;
+
+    // 数据校验
+    ctx.validate({ title: { type: 'string' } });
+
     ctx.status = 204;
     ctx.type = 'json';
     ctx.body = await ctx.model.todo.update(ctx.params.id, ctx.request.body);

@@ -9,9 +9,9 @@ module.exports = appInfo => {
 
   config.coreMiddleware = [
     'static',
+    'access_log',
     'error_handler',
     'body_parser',
-    'access_log',
     'not_found',
   ];
 

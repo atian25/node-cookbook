@@ -10,6 +10,11 @@ module.exports = appInfo => {
     // csrf: false,
   };
 
+  config.cors = {
+    origin: '*',
+    // match: '/api',
+  };
+
   config.cluster = {
     listen: {
       port: 3000,

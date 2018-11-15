@@ -1,5 +1,7 @@
 'use strict';
 
+const { UnprocessableEntity } = require('http-errors');
+
 // 简化示例，直接全局变量存储数据。
 const Todo = require('../model/todo');
 const db = new Todo();
@@ -20,6 +22,9 @@ exports.index = function(req, res, next) {
 
 // 创建任务
 exports.create = function(req, res, next) {
+  // 数据校验
+  if (!req.body.title) return next(new UnprocessableEntity('task title required'));
+
   // `req.body` 为上一个中间件的产物
   db.create(req.body, (err, data) => {
     if (err) return next(err); // 错误处理
@@ -31,6 +36,9 @@ exports.create = function(req, res, next) {
 
 // 修改任务
 exports.update = function(req, res, next) {
+  // 数据校验
+  if (!req.body.title) return next(new UnprocessableEntity('task title required'));
+
   // URL 匹配参数
   const { id } = req.params;
   db.update(id, req.body, err => {

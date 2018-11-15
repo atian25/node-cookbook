@@ -43,27 +43,34 @@ module.exports = class Super extends Koa {
 
   // 加载应用的 `app/model` 目录，挂载到 Context 原型上，可以通过 `ctx.model` 调用
   loadModel() {
-    // 扩展 Context 原型
-    this.context.model = {};
-
+    // 加载文件
+    const modelMapping = new Map();
     const dir = path.join(this.baseDir, 'app/model');
     const files = fs.readdirSync(dir);
     for (const file of files) {
       const baseName = path.basename(file, '.js');
       const Model = require(path.join(dir, file));
-
-      // 每次请求都会初始化一个
-      const INSTANCE = Symbol(`context#cache_${baseName}`);
-      Object.defineProperty(this.context.model, baseName, {
-        get() {
-          // 当前请求内，调用多次都仅初始化一次。
-          if (!this[INSTANCE]) {
-            this[INSTANCE] = new Model(this);
-          }
-          return this[INSTANCE];
-        },
-      });
+      modelMapping.set(baseName, Model);
     }
+
+    // 扩展 Context 原型
+    // 每次请求都会初始化一个
+    const INSTANCE = Symbol('context#model');
+    Object.defineProperty(this.context, 'model', {
+      get() {
+        if (!this[INSTANCE]) {
+          const instance = this[INSTANCE] = {};
+
+          // 把 Model 对象挂载到 ctx.model 对象
+          const ctx = this;
+          for (const [ key, Model ] of modelMapping.entries()) {
+            // 简化处理，一般需要如上用 Symbol 来 cache 一层
+            instance[key] = new Model(ctx);
+          }
+        }
+        return this[INSTANCE];
+      },
+    });
   }
 
   // 加载中间件

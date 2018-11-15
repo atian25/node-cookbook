@@ -1,13 +1,14 @@
 'use strict';
 
 const dataStore = [
-  { id: '1', title: 'Read history of Express', completed: true },
+  { id: '1', title: 'Read history of Node.js', completed: true },
   { id: '2', title: 'Learn Koa', completed: true },
   { id: '3', title: 'Star Egg', completed: false },
 ];
 
-module.exports = class Todo {
-  constructor() {
+module.exports = class TodoStore {
+  constructor(ctx) {
+    this.ctx = ctx;
     this.store = dataStore;
   }
 
@@ -24,14 +25,14 @@ module.exports = class Todo {
   // 查询任务对象，找不到对象会抛错
   async get(id) {
     const index = id ? this.store.findIndex(x => x.id === id) : -1;
-    if (index === -1) throw new Error(`task#${id} not found`);
+    if (index === -1) this.ctx.throw(500, `task#${id} not found`);
     return this.store[index];
   }
 
   // 添加任务，会校验 title 属性
-  async add(todo) {
+  async create(todo) {
     // 校验数据
-    if (!todo.title) throw new Error('task title required');
+    if (!todo.title) this.ctx.throw(422, 'task title required');
 
     // 补全数据，保存
     todo.id = Date.now().toString();
@@ -44,7 +45,7 @@ module.exports = class Todo {
   async update(id, todo) {
     // 检查是否存在
     const data = await this.get(id);
-    if (!todo.title) throw new Error('task title required');
+    if (!todo.title) this.ctx.throw(442, 'task title required');
 
     // 修改 todo 对象，并更新状态
     return Object.assign(data, todo);
@@ -53,7 +54,7 @@ module.exports = class Todo {
   // 删除任务，找不到对象会抛错
   async destroy(id) {
     const index = id ? this.store.findIndex(x => x.id === id) : -1;
-    if (index === -1) throw new Error(`task#${id} not found`);
+    if (index === -1) this.ctx.throw(500, `task#${id} not found`);
 
     // 删除对象
     return this.store.splice(index, 1);

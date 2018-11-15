@@ -24,25 +24,25 @@ app.use((req, res, next) => {
 });
 
 // 路由映射
-app.get('/', (req, res) => {
+app.get('/', (req, res, next) => {
   res.status(200);
   res.setHeader('Content-Type', 'text/html');
   // 注意：此处为简化示例，一般需要缓存
   const filePath = path.join(__dirname, 'app/view/index.html');
   fs.readFile(filePath, (err, content) => {
-    if (err) return errorHandler(err, req, res);
-    res.end(content.toString());
+    if (err) return next(err);
+    res.end(content);
   });
 });
 
 // 查询列表，支持过滤 `/api/todo?completed=true`
-app.get('/api/todo', (req, res) => {
+app.get('/api/todo', (req, res, next) => {
   // query 参数均为字符串，需转换
   let { completed } = req.query;
   if (req.query.completed !== undefined) completed = completed === 'true';
 
   db.list({ completed }, (err, data) => {
-    if (err) return errorHandler(err, req, res); // 错误处理
+    if (err) return next(err); // 错误处理
     // 发送响应
     res.status(200);
     res.json(data);
@@ -67,10 +67,17 @@ app.use((req, res, next) => {
 });
 
 // 创建任务
-app.post('/api/todo', (req, res) => {
+app.post('/api/todo', (req, res, next) => {
+  // 数据校验
+  if (!req.body.title) {
+    const err = new Error('task title required');
+    err.status = 422;
+    return next(err);
+  }
+
   // `req.body` 为上一个中间件的产物
   db.create(req.body, (err, data) => {
-    if (err) return errorHandler(err, req, res); // 错误处理
+    if (err) return next(err); // 错误处理
     // 发送响应
     res.status(201);
     res.json(data);
@@ -78,12 +85,19 @@ app.post('/api/todo', (req, res) => {
 });
 
 // 修改任务
-app.put(/^\/api\/todo\/(\d+)$/, (req, res) => {
+app.put(/^\/api\/todo\/(\d+)$/, (req, res, next) => {
+  // 数据校验
+  if (!req.body.title) {
+    const err = new Error('task title required');
+    err.status = 422;
+    return next(err);
+  }
+
   // 框架从 URL 中用正则式匹配出 ID，存到了 `req.params` 中
   const id = req.params[0];
 
   db.update(id, req.body, err => {
-    if (err) return errorHandler(err, req, res); // 错误处理
+    if (err) return next(err); // 错误处理
     // 发送响应，无需返回对象
     res.status(204);
     res.setHeader('Content-Type', 'application/json');
@@ -92,9 +106,9 @@ app.put(/^\/api\/todo\/(\d+)$/, (req, res) => {
 });
 
 // 删除任务
-app.delete(/^\/api\/todo\/(\d+)$/, (req, res) => {
+app.delete(/^\/api\/todo\/(\d+)$/, (req, res, next) => {
   db.destroy(req.params[0], err => {
-    if (err) return errorHandler(err, req, res); // 错误处理
+    if (err) return next(err); // 错误处理
     // 发送响应，无需返回对象
     res.status(204);
     res.setHeader('Content-Type', 'application/json');
@@ -102,20 +116,28 @@ app.delete(/^\/api\/todo\/(\d+)$/, (req, res) => {
   });
 });
 
-// 错误处理
-function errorHandler(err, req, res) {
-  console.error(`[Error] ${req.method} ${req.url} got ${err.message}`);
-  res.status(500);
-  res.statusMessage = err.message;
-  res.end();
-}
-
 // 兜底处理
-app.use((req, res) => {
-  const msg = `[Error] ${req.method} ${req.url} not found`;
-  console.warn(msg);
-  res.status(404);
-  res.end(msg);
+app.use((req, res, next) => {
+  const err = new Error('Not Found');
+  err.status = 404;
+  return next(err);
+});
+
+// 错误处理
+app.onError((err, req, res) => {
+  console.error(`[Error] ${req.method} ${req.url}`, err);
+
+  res.status(err.status || 500);
+  res.statusMessage = err.message;
+
+  // API 请求错误则返回 JSON
+  if (req.url.startsWith('/api/')) {
+    res.setHeader('Content-Type', 'application/json');
+    res.json({ message: err.message });
+  } else {
+    res.setHeader('Content-Type', 'text/html');
+    res.end(err.message);
+  }
 });
 
 // 直接执行的时候，启动服务

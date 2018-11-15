@@ -6,5 +6,8 @@
     "start": "node index.js",
     "test": "egg-bin test",
     "cov": "egg-bin cov"
+  },
+  "dependencies": {
+    "http-errors": "^1.7.1"
   }
 }

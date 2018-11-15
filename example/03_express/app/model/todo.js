@@ -1,12 +1,13 @@
 'use strict';
 
+// 简化起见，全局变量存储
 const dataStore = [
-  { id: '1', title: 'Read history of Express', completed: true },
+  { id: '1', title: 'Read history of Node.js', completed: true },
   { id: '2', title: 'Learn Koa', completed: true },
   { id: '3', title: 'Star Egg', completed: false },
 ];
 
-module.exports = class Todo {
+module.exports = class TodoStore {
   constructor() {
     this.store = dataStore;
   }
@@ -25,7 +26,7 @@ module.exports = class Todo {
   get(id, callback) {
     const index = id ? this.store.findIndex(x => x.id === id) : -1;
     if (index === -1) return callback(new Error(`task#${id} not found`));
-    callback(undefined, this.store[index]);
+    callback(undefined, this.store[index], index);
   }
 
   // 添加任务，会校验 title 属性
@@ -54,11 +55,13 @@ module.exports = class Todo {
 
   // 删除任务，找不到对象会抛错
   destroy(id, callback) {
-    const index = id ? this.store.findIndex(x => x.id === id) : -1;
-    if (index === -1) return callback(new Error(`task#${id} not found`));
+    // 检查是否存在
+    this.get(id, (err, todo, index) => {
+      if (err) return callback(err);
 
-    // 删除对象
-    const todo = this.store.splice(index, 1);
-    callback(undefined, todo);
+      // 删除对象
+      this.store.splice(index, 1);
+      callback(undefined, todo);
+    });
   }
 };

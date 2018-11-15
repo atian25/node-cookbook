@@ -17,8 +17,13 @@ exports.index = async ctx => {
 // 创建任务
 exports.create = async ctx => {
   // `ctx.requestBody` 为 body-parser 中间件的产物
+  const data = ctx.requestBody;
+
+  // 数据校验
+  if (!data.title) ctx.throw(422, 'task title required');
+
   ctx.status = 201;
-  ctx.body = await db.create(ctx.requestBody);
+  ctx.body = await db.create(data);
 };
 
 // 修改任务
@@ -28,6 +33,9 @@ exports.update = async ctx => {
 
   // `ctx.requestBody` 为 body-parser 中间件的产物
   const data = ctx.requestBody;
+
+  // 数据校验
+  if (!data.title) ctx.throw(422, 'task title required');
 
   ctx.status = 204;
   ctx.body = await db.update(id, data);

@@ -3,7 +3,11 @@
 module.exports = () => {
   const config = {};
 
-  config.middleware = [ 'test' ];
+  config.middleware = [ 'cors' ];
+
+  config.cors = {
+    origin: '*',
+  };
 
   return config;
 };

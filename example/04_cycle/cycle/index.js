@@ -2,6 +2,7 @@
 
 const http = require('http');
 const URL = require('url');
+const createError = require('http-errors');
 module.exports = class Cycle {
   constructor() {
     this.middlewares = [];
@@ -102,6 +103,12 @@ module.exports = class Cycle {
 
       set body(value) {
         this._body = value;
+      },
+
+      // 错误处理 ctx.throw(400, 'name required') / ctx.throw(new Error('invalid'))
+      // https://github.com/jshttp/http-errors
+      throw(...args) {
+        throw createError(...args);
       },
     };
 
