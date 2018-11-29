@@ -1,0 +1,30 @@
+{
+  "name": "cnode-egg",
+  "version": "1.0.0",
+  "description": "cnode powered by egg",
+  "private": true,
+  "dependencies": {
+    "egg": "^2.2.1",
+    "egg-passport": "^2.0.1",
+    "egg-passport-github": "^1.0.0",
+    "egg-scripts": "^2.5.0",
+    "egg-validate": "^2.0.2",
+    "egg-view-nunjucks": "^2.2.0"
+  },
+  "devDependencies": {
+    "egg-bin": "^4.3.5",
+    "egg-mock": "^3.14.0"
+  },
+  "engines": {
+    "node": "^10"
+  },
+  "scripts": {
+    "start": "egg-scripts start --daemon --title=cnode-egg",
+    "stop": "egg-scripts stop --title=cnode-egg",
+    "dev": "egg-bin dev",
+    "debug": "egg-bin debug",
+    "test": "egg-bin test",
+    "cov": "egg-bin cov",
+    "ci": "npm run lint && npm run cov"
+  }
+}
