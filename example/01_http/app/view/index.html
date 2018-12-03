@@ -18,16 +18,20 @@
           <input class="toggle-all" type="checkbox">
           <label for="toggle-all">Mark all as complete</label>
           <ul class="todo-list">
-            <li class="todo" v-for="todo in todoList" :key="todo.id" :class="{ completed: todo.completed }">
+            <li class="todo" v-for="todo in todoList" :key="todo.id" :class="{ completed: todo.completed, editing: editedTodo && todo.id === editedTodo.id }">
               <div class="view">
                 <input class="toggle" type="checkbox" :checked="todo.completed" @click="completeTodo(todo)">
-                <label>{{ todo.title }}</label>
+                <label @dblclick="editTodo(todo)">{{ todo.title }}</label>
                 <button class="destroy" @click="removeTodo(todo)"></button>
               </div>
+              <input class="edit" type="text" v-model="editedTodo && editedTodo.title" v-todo-focus="editedTodo && todo.id === editedTodo.id" @blur="doneEdit(todo)" @keyup.enter="doneEdit(todo)" @keyup.esc="cancelEdit(todo)">
             </li>
           </ul>
         </section>
         <footer class="footer" v-show="todoList.length">
+          <span class="todo-count">
+          <strong>{{ remaining }}</strong> {{ remaining === 1 ? 'item' : 'items' }} left
+          </span>
           <ul class="filters">
             <li><a @click="listData()" :class="{ selected: completed === undefined }">All</a></li>
             <li><a @click="listData(false)" :class="{ selected: completed === false }">Active</a></li>
@@ -35,6 +39,11 @@
           </ul>
         </footer>
       </section>
+      <footer class="info" style="font-size: 14px; font-weight: bold;">
+        <p>TIP: Double-click to edit a todo</p>
+        <p>Written by <a href="https://github.com/atian25">TZ</a></p>
+        <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
+      </footer>
     </div>
   </body>
   <script src="//cdn.jsdelivr.net/npm/vue"></script>
@@ -45,7 +54,13 @@
       data: {
         todoList: [],
         newTodo: '',
+        editedTodo: null,
         completed: 'all',
+      },
+      computed: {
+        remaining: function() {
+          return this.todoList.filter(x => !x.completed).length;
+        },
       },
       methods: {
         listData: function(completed) {
@@ -74,10 +89,29 @@
 
         completeTodo: function(todo) {
           todo.completed = !todo.completed;
-          axios.put(`/api/todo/${todo.id}`, todo)
-            .then(() => {
-              this.newTodo = '';
-            });
+          axios.put(`/api/todo/${todo.id}`, todo);
+        },
+
+        editTodo: function(todo) {
+          this.editedTodo = Object.assign({}, todo);
+        },
+
+        doneEdit: function (todo) {
+          if (!this.editedTodo) return;
+
+          const title = this.editedTodo.title.trim();
+          this.editedTodo = null;
+
+          if (!title) {
+            this.removeTodo(todo);
+          } else if (todo.title !== title){
+            todo.title = title;
+            axios.put(`/api/todo/${todo.id}`, todo);
+          }
+        },
+
+        cancelEdit: function (todo) {
+          this.editedTodo = null;
         },
 
         removeTodo: function(todo) {
@@ -91,6 +125,14 @@
 
       mounted() {
         this.listData();
+      },
+
+      directives: {
+        'todo-focus': function(el, binding) {
+          if (binding.value) {
+            el.focus();
+          }
+        }
       },
     });
   </script>

@@ -7,7 +7,7 @@ const dataStore = [
   { id: '3', title: 'Star Egg', completed: false },
 ];
 
-module.exports = class TodoStore {
+module.exports = class TodoModel {
   constructor() {
     this.store = dataStore;
   }
